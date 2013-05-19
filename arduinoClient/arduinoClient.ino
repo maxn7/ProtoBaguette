@@ -23,9 +23,9 @@
 #define DEBUG(str)   Serial.println(str);
 
 // Newer Ethernet shields have a MAC address printed on a sticker on the shield
-byte mac[] = { 0x90, 0xA2, 0xDA, 0x0D, 0xA0, 0x28 };
+byte mac[] = { 0x90, 0xA2, 0xDA, 0x0D, 0xA0, 0x29 };
 
-IPAddress dev(192,168,0,40); // Unused.
+IPAddress dev(192,168,0,20); // Unused.
 IPAddress fixed(192,168,0,199); // Unused.
 
 EthernetClient client;
@@ -46,15 +46,15 @@ void loop()
 {
    int i;
    
-   DEBUG("LOOP")
    delay(1000); // Limit the rate of connexions.
+   DEBUG("LOOP")
    
    if (Ethernet.begin(mac) == 0) { // Connectivity or DHCP error.
       return;
    }
    DEBUG("DHCP_OK")
    
-   if (!client.connect(SERVER, PORT)) {
+   if (!client.connect(dev, PORT)) {
       return; // Might be a firewall error.
    }
    DEBUG("CONNECT_OK")

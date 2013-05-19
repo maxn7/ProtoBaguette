@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # TODO case insensitive
-# TODO different idenfiers for baguettes
+# TODO different identifiers for baguettes
 # TODO default channel
 # TODO show history
 # TODO send \r\n but accept \n in reception
@@ -9,6 +9,7 @@
 # TODO aggregate messages with a 1 second buffer
 # todo rename "part"
 
+import re
 import socket
 import time
 import uuid
@@ -36,11 +37,11 @@ def generate_identifier(length):
 
 
 def is_valid_identifier(identifier):
-    if re.match("\W+", "", identifier): # TODO better alphabet
-        return false
+    if re.match("[^0-9A-F]", identifier): # TODO better alphabet
+        return False
     if len(identifier) > 16: # TODO better len
-        return false
-    return true
+        return False
+    return True
 
 
 class Channel(object):
@@ -138,7 +139,7 @@ class Client(LineReceiver):
             if preamble.has_key("channel"):
                 channel_identifier = preamble["channel"]
             else:
-                raise Exception("No channel")
+                channel_identifier = self.identifier # TODO not for users
             
             self.channel = self.server.get_channel(channel_identifier)
             self.channel.join(self)
