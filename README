@@ -1,1 +1,4 @@
 Tasty electronics !
+
+sudo apt-get install python-pip
+sudo pip install django-bootstrap-toolkit
