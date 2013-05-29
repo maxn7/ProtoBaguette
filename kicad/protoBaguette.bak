@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date lun. 20 mai 2013 22:22:33 CEST
+EESchema Schematic File Version 2  date mer. 29 mai 2013 21:37:40 CEST
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -30,13 +30,14 @@ LIBS:atmel
 LIBS:contrib
 LIBS:protoBaguette
 LIBS:valves
+LIBS:protoBaguette-cache
 EELAYER 25  0
 EELAYER END
 $Descr A4 11700 8267
 encoding utf-8
 Sheet 1 1
 Title "Alpha prototype"
-Date "20 may 2013"
+Date "29 may 2013"
 Rev "0.1"
 Comp "ProtoBaguette"
 Comment1 ""
@@ -44,6 +45,15 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+$Comp
+L PIC32MX150F128-1 U?
+U 1 1 51A65900
+P 3400 2950
+F 0 "U?" H 3425 3650 60  0000 C CNN
+F 1 "PIC32MX150F128-1" H 3475 1700 60  0000 C CNN
+	1    3400 2950
+	1    0    0    -1  
+$EndComp
 $Comp
 L R R?
 U 1 1 519A849C
@@ -390,7 +400,7 @@ F 1 "GND" H 7250 3030 30  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text Notes 9200 800  0    60   ~ 0
-TODO : \n- regulator ?\n- ICP
+TODO : \n- regulator ?\n- Clock\n- Controller reset\n
 $Comp
 L GND #PWR?
 U 1 1 519A75C8
