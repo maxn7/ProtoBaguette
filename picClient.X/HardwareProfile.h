@@ -100,8 +100,8 @@
 // UART configuration (not too important since we don't have a UART
 // connector attached normally, but needed to compile if the STACK_USE_UART
 // or STACK_USE_UART2TCP_BRIDGE features are enabled.
-#define UARTTX_TRIS			(TRISFbits.TRISF3)
-#define UARTRX_TRIS			(TRISFbits.TRISF2)
+//#define UARTTX_TRIS			(TRISFbits.TRISF3)
+//#define UARTRX_TRIS			(TRISFbits.TRISF2)
 
 
 // Specify which SPI to use for the ENC28J60 or ENC624J600.  SPI1 is
@@ -120,12 +120,13 @@
 
 
 // ENC28J60 I/O pins
-#define ENC_CS_TRIS			(TRISAbits.TRISA0)
-#define ENC_CS_IO			(PORTAbits.RA0)
+#define ENC_CS_TRIS			(TRISBbits.TRISB15)
+#define ENC_CS_IO			(PORTBbits.RB15)
 //#define ENC_RST_TRIS		(TRISDbits.TRISD15)	// Not connected by default.  It is okay to leave this pin completely unconnected, in which case this macro should simply be left undefined.
 //#define ENC_RST_IO		(PORTDbits.RD15)
 
 // SPI SCK, SDI, SDO pins are automatically controlled by the
+// PIC32 SPI module
 #define ENC_SPI_IF		(IFS0bits.SPI1RXIF)
 #define ENC_SSPBUF		(SPI1BUF)
 #define ENC_SPICON1		(SPI1CON)

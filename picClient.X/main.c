@@ -16,6 +16,7 @@
 #include "HardwareProfile.h"
 #include "TCPIP.h"
 
+static void BakeBaguette(void);
 static void InitAppConfig(void);
 /******************************************************************************/
 /* Global Variable Declaration                                                */
@@ -59,16 +60,54 @@ int32_t main(void)
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
 
 
+    StackInit();
+
+    // Now that all items are initialized, begin the co-operative
+    // multitasking loop.  This infinite loop will continuously
+    // execute all stack-related tasks, as well as your own
+    // application's functions.  Custom functions should be added
+    // at the end of this loop.
+    // Note that this is a "co-operative mult-tasking" mechanism
+    // where every task performs its tasks (whether all in one shot
+    // or part of it) and returns so that other tasks can do their
+    // job.
+    // If a task needs very long time to do its job, it must be broken
+    // down into smaller pieces so that other tasks can have CPU time.
     while(1)
+    {
+        // This task performs normal stack task including checking
+        // for incoming packet, type of packet and calling
+        // appropriate stack entity to process it.
+        StackTask();
+
+        StackApplications();
+
+        BakeBaguette();
+    }
+
+
+    /*while(1)
     {
         mPORTAToggleBits(BIT_0);
         putsUART1("Hello World! \n");
         
         Delay10us(50000);
 
-    }
+    }*/
 }
 
+static void BakeBaguette(void)
+{
+    static int i = 0;
+    static TCP_SOCKET skt;
+
+    if (i > 10) {
+        skt = TCPOpen((DWORD)(PTR_BASE)"www.microchip.com", TCP_OPEN_ROM_HOST, 80, TCP_PURPOSE_DEFAULT);
+
+    }
+    else
+        i++;
+}
 
 static void InitAppConfig(void)
 {
@@ -87,7 +126,4 @@ static void InitAppConfig(void)
         AppConfig.MyGateway.Val = MY_DEFAULT_GATE_BYTE1 | MY_DEFAULT_GATE_BYTE2<<8ul | MY_DEFAULT_GATE_BYTE3<<16ul | MY_DEFAULT_GATE_BYTE4<<24ul;
         AppConfig.PrimaryDNSServer.Val = MY_DEFAULT_PRIMARY_DNS_BYTE1 | MY_DEFAULT_PRIMARY_DNS_BYTE2<<8ul  | MY_DEFAULT_PRIMARY_DNS_BYTE3<<16ul  | MY_DEFAULT_PRIMARY_DNS_BYTE4<<24ul;
         AppConfig.SecondaryDNSServer.Val = MY_DEFAULT_SECONDARY_DNS_BYTE1 | MY_DEFAULT_SECONDARY_DNS_BYTE2<<8ul  | MY_DEFAULT_SECONDARY_DNS_BYTE3<<16ul  | MY_DEFAULT_SECONDARY_DNS_BYTE4<<24ul;
-
-   
-
 }

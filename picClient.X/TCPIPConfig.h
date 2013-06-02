@@ -68,9 +68,9 @@
 //#define STACK_USE_ICMP_CLIENT			// Ping transmission capability
 //#define STACK_USE_HTTP2_SERVER			// New HTTP server with POST, Cookies, Authentication, etc.
 //#define STACK_USE_SSL_SERVER			// SSL server socket support (Requires SW300052)
-//#define STACK_USE_SSL_CLIENT			// SSL client socket support (Requires SW300052)
+#define STACK_USE_SSL_CLIENT			// SSL client socket support (Requires SW300052)
 //#define STACK_USE_AUTO_IP               // Dynamic link-layer IP address automatic configuration protocol
-//#define STACK_USE_DHCP_CLIENT			// Dynamic Host Configuration Protocol client for obtaining IP address and other parameters
+#define STACK_USE_DHCP_CLIENT			// Dynamic Host Configuration Protocol client for obtaining IP address and other parameters
 //#define STACK_USE_DHCP_SERVER			// Single host DHCP server
 //#define STACK_USE_FTP_SERVER			// File Transfer Protocol (old)
 //#define STACK_USE_SMTP_CLIENT			// Simple Mail Transfer Protocol for sending email
@@ -81,7 +81,7 @@
 //#define STACK_USE_GENERIC_TCP_SERVER_EXAMPLE	// ToUpper server example in GenericTCPServer.c
 //#define STACK_USE_TELNET_SERVER			// Telnet server
 //#define STACK_USE_ANNOUNCE				// Microchip Embedded Ethernet Device Discoverer server/client
-//#define STACK_USE_DNS					// Domain Name Service Client for resolving hostname strings to IP addresses
+#define STACK_USE_DNS					// Domain Name Service Client for resolving hostname strings to IP addresses
 //#define STACK_USE_DNS_SERVER			// Domain Name Service Server for redirection to the local device
 //#define STACK_USE_NBNS					// NetBIOS Name Service Server for repsonding to NBNS hostname broadcast queries
 //#define STACK_USE_REBOOT_SERVER			// Module for resetting this PIC remotely.  Primarily useful for a Bootloader.
@@ -148,7 +148,7 @@
  *   To clear EEPROM, hold BUTTON0, reset the board, and continue
  *   holding until the LEDs flash.  Release, and reset again.
  */
-#define MY_DEFAULT_HOST_NAME			"MCHPBOARD"
+#define MY_DEFAULT_HOST_NAME			"BAGUETTE1"
 
 #define MY_DEFAULT_MAC_BYTE1            (0x00)	// Use the default of 00-04-A3-00-00-00
 #define MY_DEFAULT_MAC_BYTE2            (0x04)	// if using an ENCX24J600, MRF24WB0M, or
@@ -157,30 +157,30 @@
 #define MY_DEFAULT_MAC_BYTE5            (0x00)	// internal factory programmed MAC
 #define MY_DEFAULT_MAC_BYTE6            (0x00)	// address instead.
 
-#define MY_DEFAULT_IP_ADDR_BYTE1        (169ul)
-#define MY_DEFAULT_IP_ADDR_BYTE2        (254ul)
-#define MY_DEFAULT_IP_ADDR_BYTE3        (1ul)
-#define MY_DEFAULT_IP_ADDR_BYTE4        (1ul)
+#define MY_DEFAULT_IP_ADDR_BYTE1        (192ul)
+#define MY_DEFAULT_IP_ADDR_BYTE2        (168ul)
+#define MY_DEFAULT_IP_ADDR_BYTE3        (0ul)
+#define MY_DEFAULT_IP_ADDR_BYTE4        (195ul)
 
 #define MY_DEFAULT_MASK_BYTE1           (255ul)
 #define MY_DEFAULT_MASK_BYTE2           (255ul)
-#define MY_DEFAULT_MASK_BYTE3           (0ul)
+#define MY_DEFAULT_MASK_BYTE3           (255ul)
 #define MY_DEFAULT_MASK_BYTE4           (0ul)
 
-#define MY_DEFAULT_GATE_BYTE1           (169ul)
-#define MY_DEFAULT_GATE_BYTE2           (254ul)
-#define MY_DEFAULT_GATE_BYTE3           (1ul)
-#define MY_DEFAULT_GATE_BYTE4           (1ul)
+#define MY_DEFAULT_GATE_BYTE1           (192ul)
+#define MY_DEFAULT_GATE_BYTE2           (168ul)
+#define MY_DEFAULT_GATE_BYTE3           (0ul)
+#define MY_DEFAULT_GATE_BYTE4           (254ul)
 
-#define MY_DEFAULT_PRIMARY_DNS_BYTE1	(169ul)
-#define MY_DEFAULT_PRIMARY_DNS_BYTE2	(254ul)
-#define MY_DEFAULT_PRIMARY_DNS_BYTE3	(1ul)
-#define MY_DEFAULT_PRIMARY_DNS_BYTE4	(1ul)
+#define MY_DEFAULT_PRIMARY_DNS_BYTE1	(8ul)
+#define MY_DEFAULT_PRIMARY_DNS_BYTE2	(8ul)
+#define MY_DEFAULT_PRIMARY_DNS_BYTE3	(8ul)
+#define MY_DEFAULT_PRIMARY_DNS_BYTE4	(8ul)
 
-#define MY_DEFAULT_SECONDARY_DNS_BYTE1	(0ul)
-#define MY_DEFAULT_SECONDARY_DNS_BYTE2	(0ul)
-#define MY_DEFAULT_SECONDARY_DNS_BYTE3	(0ul)
-#define MY_DEFAULT_SECONDARY_DNS_BYTE4	(0ul)
+#define MY_DEFAULT_SECONDARY_DNS_BYTE1	(8ul)
+#define MY_DEFAULT_SECONDARY_DNS_BYTE2	(8ul)
+#define MY_DEFAULT_SECONDARY_DNS_BYTE3	(4ul)
+#define MY_DEFAULT_SECONDARY_DNS_BYTE4	(4ul)
 
 // =======================================================================
 //   PIC32MX7XX/6XX MAC Layer Options
@@ -216,7 +216,7 @@
  *   based on module selections above.  If your custom module
  *   requires them otherwise, enable them here.
  */
-//#define STACK_USE_TCP
+#define STACK_USE_TCP
 //#define STACK_USE_UDP
 
 /* Client Mode Configuration
@@ -241,7 +241,9 @@
 	// Define names of socket types
 	#define TCP_SOCKET_TYPES
 		#define TCP_PURPOSE_GENERIC_TCP_CLIENT 0
-		#define TCP_PURPOSE_GENERIC_TCP_SERVER 1
+		#define TCP_PURPOSE_BAGUETTE 1
+		#define TCP_PURPOSE_DEFAULT  2
+		/*#define TCP_PURPOSE_GENERIC_TCP_SERVER 1
 		#define TCP_PURPOSE_TELNET 2
 		#define TCP_PURPOSE_FTP_COMMAND 3
 		#define TCP_PURPOSE_FTP_DATA 4
@@ -251,7 +253,7 @@
 		#define TCP_PURPOSE_HTTP_SERVER 8
 		#define TCP_PURPOSE_DEFAULT 9
 		#define TCP_PURPOSE_BERKELEY_SERVER 10
-		#define TCP_PURPOSE_BERKELEY_CLIENT 11
+		#define TCP_PURPOSE_BERKELEY_CLIENT 11*/
 	#define END_OF_TCP_SOCKET_TYPES
 
 	#if defined(__TCP_C)
@@ -277,6 +279,9 @@
 		} TCPSocketInitializer[] =
 		{
 			{TCP_PURPOSE_GENERIC_TCP_CLIENT, TCP_ETH_RAM, 125, 100},
+			{TCP_PURPOSE_BAGUETTE, TCP_ETH_RAM, 200, 200},
+                        {TCP_PURPOSE_DEFAULT, TCP_ETH_RAM, 200, 200},
+			/*
 			{TCP_PURPOSE_GENERIC_TCP_SERVER, TCP_ETH_RAM, 20, 20},
 			{TCP_PURPOSE_TELNET, TCP_ETH_RAM, 200, 150},
 			//{TCP_PURPOSE_TELNET, TCP_ETH_RAM, 200, 150},
@@ -292,7 +297,7 @@
 			{TCP_PURPOSE_BERKELEY_SERVER, TCP_ETH_RAM, 25, 20},
 			//{TCP_PURPOSE_BERKELEY_SERVER, TCP_ETH_RAM, 25, 20},
 			//{TCP_PURPOSE_BERKELEY_SERVER, TCP_ETH_RAM, 25, 20},
-			//{TCP_PURPOSE_BERKELEY_CLIENT, TCP_ETH_RAM, 125, 100},
+			//{TCP_PURPOSE_BERKELEY_CLIENT, TCP_ETH_RAM, 125, 100},*/
 		};
 		#define END_OF_TCP_CONFIGURATION
 	#endif

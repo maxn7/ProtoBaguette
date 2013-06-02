@@ -6,94 +6,46 @@
                    projectFiles="true">
       <logicalFolder name="inc" displayName="TCPIP Stack" projectFiles="true">
         <itemPath>../MCPTCPIP/inc/AES_ECB.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/TFTPc.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/WFRaw.h</itemPath>
         <itemPath>../MCPTCPIP/inc/regdef.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/ICMP.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/SMTP.h</itemPath>
         <itemPath>../MCPTCPIP/inc/Hashes.h</itemPath>
         <itemPath>../MCPTCPIP/inc/Helpers.h</itemPath>
         <itemPath>../MCPTCPIP/inc/ARCFOUR.h</itemPath>
         <itemPath>../MCPTCPIP/inc/AES_CFB.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/SPIRAM.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/_HTTP2.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/ETHPIC32ExtPhySMSC8720.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/WFConsoleIwconfig.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/SNMPv3.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/WFConsole.h</itemPath>
         <itemPath>../MCPTCPIP/inc/MAC.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/Reboot.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/WFConsoleIfconfig.h</itemPath>
         <itemPath>../MCPTCPIP/inc/AES_OFB.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/WFApi.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/Telnet.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/ENCX24J600.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/MPFS2.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/UART2TCPBridge.h</itemPath>
         <itemPath>../MCPTCPIP/inc/ETHPIC32ExtPhyRegs.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/NBNS.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/FTP.h</itemPath>
         <itemPath>../MCPTCPIP/inc/RSA.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/ZeroconfHelper.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/FileSystem.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/SNTP.h</itemPath>
         <itemPath>../MCPTCPIP/inc/SSL.h</itemPath>
         <itemPath>../MCPTCPIP/inc/TCP.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/AutoIP.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/WFEasyConfig.h</itemPath>
         <itemPath>../MCPTCPIP/inc/TCPIP.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/WFConsoleMsgHandler.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/WFMgmtMsg.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/WFConsoleMsgs.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/ZeroconfLinkLocal.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/SPIFlash.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/ETHPIC32ExtPhyDP83848.h</itemPath>
         <itemPath>../MCPTCPIP/inc/Tick.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/ETHPIC32ExtPhySMSC8700.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/eth_pic32_ext_phy_rtl8201FL.h</itemPath>
         <itemPath>../MCPTCPIP/inc/ETH97J60.h</itemPath>
         <itemPath>../MCPTCPIP/inc/SSLClientSize.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/WF_pbkdf2.h</itemPath>
         <itemPath>../MCPTCPIP/inc/ARP.h</itemPath>
         <itemPath>../MCPTCPIP/inc/TCPPerformanceTest.h</itemPath>
         <itemPath>../MCPTCPIP/inc/ENC28J60.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/LCDBlocking.h</itemPath>
         <itemPath>../MCPTCPIP/inc/StackTsk.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/WFConsoleIwpriv.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/WFDriverPrv_24G.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/WFRaw_24G.h</itemPath>
         <itemPath>../MCPTCPIP/inc/AES.h</itemPath>
         <itemPath>../MCPTCPIP/inc/IP.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/UART.h</itemPath>
         <itemPath>../MCPTCPIP/inc/BigInt.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/HTTP2.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/WFDriverPrv.h</itemPath>
         <itemPath>../MCPTCPIP/inc/UDPPerformanceTest.h</itemPath>
         <itemPath>../MCPTCPIP/inc/Announce.h</itemPath>
         <itemPath>../MCPTCPIP/inc/Random.h</itemPath>
         <itemPath>../MCPTCPIP/inc/DynDNS.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/WFDebugStrings.h</itemPath>
         <itemPath>../MCPTCPIP/inc/AES_CTR.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/XEEPROM.h</itemPath>
         <itemPath>../MCPTCPIP/inc/UDP.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/SNMP.h</itemPath>
         <itemPath>../MCPTCPIP/inc/AES_ECB_PIC32.h</itemPath>
         <itemPath>../MCPTCPIP/inc/ETHPIC32ExtPhy.h</itemPath>
         <itemPath>../MCPTCPIP/inc/Delay.h</itemPath>
         <itemPath>../MCPTCPIP/inc/aes_pic24f.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/WFMac.h</itemPath>
         <itemPath>../MCPTCPIP/inc/AES_CBC.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/ZeroconfMulticastDNS.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/BerkeleyAPI.h</itemPath>
         <itemPath>../MCPTCPIP/inc/DNS.h</itemPath>
         <itemPath>../MCPTCPIP/inc/DHCP.h</itemPath>
-        <itemPath>../MCPTCPIP/inc/ETHPIC32ExtPhyDP83640.h</itemPath>
       </logicalFolder>
       <itemPath>system.h</itemPath>
       <itemPath>user.h</itemPath>
       <itemPath>HardwareProfile.h</itemPath>
       <itemPath>TCPIPConfig.h</itemPath>
-      <itemPath>HTTPPrint.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -110,6 +62,16 @@
         <itemPath>../MCPTCPIP/src/ENC28J60.c</itemPath>
         <itemPath>../MCPTCPIP/src/Delay.c</itemPath>
         <itemPath>../MCPTCPIP/src/StackTsk.c</itemPath>
+        <itemPath>../MCPTCPIP/src/DHCP.c</itemPath>
+        <itemPath>../MCPTCPIP/src/SSL.c</itemPath>
+        <itemPath>../MCPTCPIP/src/TCP.c</itemPath>
+        <itemPath>../MCPTCPIP/src/UDP.c</itemPath>
+        <itemPath>../MCPTCPIP/src/ARCFOUR.c</itemPath>
+        <itemPath>../MCPTCPIP/src/DNS.c</itemPath>
+        <itemPath>../MCPTCPIP/src/RSA.c</itemPath>
+        <itemPath>../MCPTCPIP/src/Hashes.c</itemPath>
+        <itemPath>../MCPTCPIP/src/Random.c</itemPath>
+        <itemPath>../MCPTCPIP/src/BigInt.c</itemPath>
       </logicalFolder>
       <itemPath>configuration_bits.c</itemPath>
       <itemPath>exceptions.c</itemPath>
@@ -117,6 +79,7 @@
       <itemPath>main.c</itemPath>
       <itemPath>system.c</itemPath>
       <itemPath>user.c</itemPath>
+      <itemPath>../MCPTCPIP/src/BigInt_helper_PIC32.S</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -124,8 +87,6 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
     <itemPath>getting_started.txt</itemPath>
-    <itemPath>legal_disclaimer.txt</itemPath>
-    <itemPath>project_information.txt</itemPath>
   </logicalFolder>
   <sourceRootList>
     <Elem>../MTCPIPStack</Elem>
@@ -172,7 +133,7 @@
         <property key="enable-unroll-loops" value="false"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
-                  value="/home/max/protoBaguette/picClient.X;/home/max/protoBaguette/MCPTCPIP/inc"/>
+                  value="../picClient.X;../MCPTCPIP/inc"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
         <property key="make-warnings-into-errors" value="false"/>
@@ -191,8 +152,9 @@
         <property key="enable-symbols" value="true"/>
         <property key="exclude-floating-point-library" value="false"/>
         <property key="expand-macros" value="false"/>
-        <property key="extra-include-directories-for-assembler" value="../"/>
-        <property key="extra-include-directories-for-preprocessor" value=""/>
+        <property key="extra-include-directories-for-assembler" value=""/>
+        <property key="extra-include-directories-for-preprocessor"
+                  value="../picClient.X;../MCPTCPIP/inc"/>
         <property key="false-conditionals" value="false"/>
         <property key="keep-locals" value="false"/>
         <property key="list-assembly" value="false"/>
