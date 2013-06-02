@@ -23,16 +23,19 @@ void InitApp(void)
 
     /* Setup analog functionality and port direction */
     mPORTASetPinsDigitalOut(BIT_0);  // Test LED
-    mPORTASetPinsDigitalIn(BIT_4);   // RX1 (RA4) input
-    mPORTBSetPinsDigitalOut(BIT_4);  // TX1 (RB4) output
 
-
-    /* Map peripheral pins */
     PPSInput (3,  U1RX, RPA4);
+    mPORTASetPinsDigitalIn(BIT_4);
+
     PPSOutput(1,  RPB4, U1TX);
+    mPORTBSetPinsDigitalOut(BIT_4);
+
 
     PPSInput (2,  SDI1, RPA1);
+    mPORTASetPinsDigitalIn(BIT_1);
+    
     PPSOutput(3, RPB13, SDO1);
+    mPORTBSetPinsDigitalOut(BIT_13);
 
 
     /* Initialize peripherals */

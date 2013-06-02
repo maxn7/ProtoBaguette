@@ -98,17 +98,25 @@ int32_t main(void)
 
 static void BakeBaguette(void)
 {
-    static int i = 0;
     static TCP_SOCKET skt;
 
-    if (i > 10) {
-        skt = TCPOpen((DWORD)(PTR_BASE)"www.microchip.com", TCP_OPEN_ROM_HOST, 80, TCP_PURPOSE_DEFAULT);
+    skt = TCPOpen((DWORD)(PTR_BASE)"dallens.fr", TCP_OPEN_ROM_HOST, 12345, TCP_PURPOSE_DEFAULT);
 
-    }
-    else
-        i++;
+    // Pour tester lancer "nc -lv 1234" sur boxxy et attendre une connexion.
 }
 
+
+// MAC Address Serialization using a MPLAB PM3 Programmer and
+// Serialized Quick Turn Programming (SQTP).
+// The advantage of using SQTP for programming the MAC Address is it
+// allows you to auto-increment the MAC address without recompiling
+// the code for each unit.  To use SQTP, the MAC address must be fixed
+// at a specific location in program memory.  Uncomment these two pragmas
+// that locate the MAC address at 0x1FFF0.  Syntax below is for MPLAB C
+// Compiler for PIC18 MCUs. Syntax will vary for other compilers.
+//#pragma romdata MACROM=0x1FFF0
+static ROM BYTE SerializedMACAddress[6] = {MY_DEFAULT_MAC_BYTE1, MY_DEFAULT_MAC_BYTE2, MY_DEFAULT_MAC_BYTE3, MY_DEFAULT_MAC_BYTE4, MY_DEFAULT_MAC_BYTE5, MY_DEFAULT_MAC_BYTE6};
+//#pragma romdata
 static void InitAppConfig(void)
 {
 
@@ -116,14 +124,17 @@ static void InitAppConfig(void)
         // deterministic for checksum generation
         memset((void*)&AppConfig, 0x00, sizeof(AppConfig));
 
-        AppConfig.Flags.bIsDHCPEnabled = TRUE;
-        AppConfig.Flags.bInConfigMode = TRUE;
 
         AppConfig.MyIPAddr.Val = MY_DEFAULT_IP_ADDR_BYTE1 | MY_DEFAULT_IP_ADDR_BYTE2<<8ul | MY_DEFAULT_IP_ADDR_BYTE3<<16ul | MY_DEFAULT_IP_ADDR_BYTE4<<24ul;
-        AppConfig.DefaultIPAddr.Val = AppConfig.MyIPAddr.Val;
         AppConfig.MyMask.Val = MY_DEFAULT_MASK_BYTE1 | MY_DEFAULT_MASK_BYTE2<<8ul | MY_DEFAULT_MASK_BYTE3<<16ul | MY_DEFAULT_MASK_BYTE4<<24ul;
-        AppConfig.DefaultMask.Val = AppConfig.MyMask.Val;
         AppConfig.MyGateway.Val = MY_DEFAULT_GATE_BYTE1 | MY_DEFAULT_GATE_BYTE2<<8ul | MY_DEFAULT_GATE_BYTE3<<16ul | MY_DEFAULT_GATE_BYTE4<<24ul;
         AppConfig.PrimaryDNSServer.Val = MY_DEFAULT_PRIMARY_DNS_BYTE1 | MY_DEFAULT_PRIMARY_DNS_BYTE2<<8ul  | MY_DEFAULT_PRIMARY_DNS_BYTE3<<16ul  | MY_DEFAULT_PRIMARY_DNS_BYTE4<<24ul;
         AppConfig.SecondaryDNSServer.Val = MY_DEFAULT_SECONDARY_DNS_BYTE1 | MY_DEFAULT_SECONDARY_DNS_BYTE2<<8ul  | MY_DEFAULT_SECONDARY_DNS_BYTE3<<16ul  | MY_DEFAULT_SECONDARY_DNS_BYTE4<<24ul;
+        AppConfig.DefaultIPAddr.Val = AppConfig.MyIPAddr.Val;
+        AppConfig.DefaultMask.Val = AppConfig.MyMask.Val;
+        memcpypgm2ram(AppConfig.NetBIOSName, (ROM void*)MY_DEFAULT_HOST_NAME, 16);
+        AppConfig.Flags.bIsDHCPEnabled = TRUE;
+        AppConfig.Flags.bInConfigMode = TRUE;
+        memcpypgm2ram((void*)&AppConfig.MyMACAddr, (ROM void*)SerializedMACAddress, sizeof(AppConfig.MyMACAddr));
+        AppConfig.MyMACAddr.v[0] = MY_DEFAULT_MAC_BYTE6;
 }
