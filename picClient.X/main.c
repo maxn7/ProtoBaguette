@@ -96,13 +96,124 @@ int32_t main(void)
     }*/
 }
 
+
+enum baguette_states {
+    BAGUETTE_INIT,
+    BAGUETTE_CONNECT,
+    BAGUETTE_WORK,
+    BAGUETTE_IDLE
+};
+
+static BYTE ServerName[] = "dallens.fr";
+
+// TODO : dallens.fr key is 2048 bit long and exceeds the 1024 limit.
+//#ifdef STACK_USE_SSL_CLIENT
+//    static WORD ServerPort = HTTPS_PORT;
+//	// Note that if HTTPS is used, the ServerName and URL
+//	// must change to an SSL enabled server.
+//#else
+static WORD ServerPort = 80;
+//#endif
+
+// Defines the URL to be requested by this HTTP client
+static ROM BYTE RemoteURL[] = "/ping.txt";
+
+
 static void BakeBaguette(void)
 {
-    static TCP_SOCKET skt;
+    static int        state = BAGUETTE_INIT;
+    static TCP_SOCKET sock;
+    static DWORD      timer;
 
-    skt = TCPOpen((DWORD)(PTR_BASE)"dallens.fr", TCP_OPEN_ROM_HOST, 12345, TCP_PURPOSE_DEFAULT);
+    // Pour tester lancer "nc -lv <port>" sur boxxy et attendre une connexion.
+    switch (state) {
+        case BAGUETTE_INIT:
+            sock = TCPOpen((DWORD)(PTR_BASE)&ServerName[0], TCP_OPEN_RAM_HOST, ServerPort, TCP_PURPOSE_BAGUETTE);
 
-    // Pour tester lancer "nc -lv 1234" sur boxxy et attendre une connexion.
+            if (sock == INVALID_SOCKET) {
+                putsUART1((ROM char*)"# Invalid socket\r\n");
+                break;
+            }
+
+            putsUART1((ROM char*)"Connecting...\r\n");
+            state = BAGUETTE_CONNECT;
+            timer = TickGet();
+            break;
+
+        case BAGUETTE_CONNECT:
+            // Wait for the remote server to accept our connection request
+            if (!TCPIsConnected(sock)) {
+                // Time out if too much time is spent in this state
+                if (TickGet() - timer > 5 * TICK_SECOND) {
+                    // Close the socket so it can be used by other modules
+                    TCPDisconnect(sock);
+                    sock = INVALID_SOCKET;
+                    state = BAGUETTE_INIT;
+                }
+                break;
+            }
+
+//#ifdef STACK_USE_SSL_CLIENT
+//            if(!TCPStartSSLClient(MySocket, (void *)"thishost"))
+//                break;
+//            ...
+//#endif
+
+            // Make certain the socket can be written to
+            //if (TCPIsPutReady(sock) < 200u)
+            //        break;
+
+            // Fill the transmit buffer.
+            TCPPutROMString(sock, (ROM BYTE*)"GET ");
+            TCPPutROMString(sock, RemoteURL);
+            TCPPutROMString(sock, (ROM BYTE*)" HTTP/1.0\r\nHost: ");
+            TCPPutString(sock, ServerName);
+            TCPPutROMString(sock, (ROM BYTE*)"\r\nConnection: close\r\n\r\n");
+
+            // Send the packet
+            TCPFlush(sock);
+
+            putsUART1((ROM char*)"Sending request...\r\n");
+            state = BAGUETTE_WORK;
+            break;
+
+        case BAGUETTE_WORK:
+            Nop();
+            
+            // Get count of RX bytes waiting
+            int w = TCPIsGetReady(sock);
+            BYTE vBuffer[9];
+
+            // Obtain and print the server reply
+            int i = sizeof(vBuffer) - 1;
+            vBuffer[i] = '\0';
+            while(w) {
+                if(w < i) {
+                    i = w;
+                    vBuffer[i] = '\0';
+                }
+                w -= TCPGetArray(sock, vBuffer, i);
+                putsUART1((char*)vBuffer);
+            }
+
+            while(BusyUART1());
+            WriteUART1('#');
+            while(BusyUART1());
+
+            // Check to see if the remote node has disconnected from us
+            if (!TCPIsConnected(sock)) {
+                putsUART1((ROM char*)"# Disconnected\r\n");
+                state = BAGUETTE_IDLE;
+            }
+            break;
+
+        case BAGUETTE_IDLE:
+            break;
+
+        default:
+            putsUART1((ROM char*)"# Unexpected state\r\n");
+            break;
+    }
 }
 
 
