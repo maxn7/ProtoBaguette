@@ -58,12 +58,12 @@ int32_t main(void)
     should probably not use a Single Vector Mode*/
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
 
-     // GPIO direction
-    mPORTBSetPinsDigitalOut(BIT_4);
 
     while(1)
     {
-        mPORTBToggleBits(BIT_4);
+        mPORTAToggleBits(BIT_0);
+        putsUART1("Hello World! \n");
+        
         Delay10us(50000);
 
     }
