@@ -20,6 +20,11 @@
 void InitApp(void)
 {
     /* Setup analog functionality and port direction */
+    U1RXR = 2; // RPA4w
+    RPB4R = 1; // U1TX
 
     /* Initialize peripherals */
+    OpenSPI1(SPI_MODE32_ON | SPI_SMP_ON | MASTER_ENABLE_ON
+            | SEC_PRESCAL_1_1 | PRI_PRESCAL_1_1, SPI_ENABLE);
+
 }

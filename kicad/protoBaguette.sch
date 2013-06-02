@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date dim. 02 juin 2013 18:17:05 CEST
+EESchema Schematic File Version 2  date dim. 02 juin 2013 18:36:38 CEST
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -126,7 +126,7 @@ Wire Wire Line
 Wire Wire Line
 	9950 4300 10200 4300
 Wire Wire Line
-	6000 4000 5800 4000
+	6000 2900 5800 2900
 Wire Wire Line
 	9950 3400 10200 3400
 Wire Wire Line
@@ -180,7 +180,7 @@ Wire Wire Line
 Wire Wire Line
 	9950 3300 10200 3300
 Wire Wire Line
-	6000 3900 5800 3900
+	3750 4300 3550 4300
 Wire Wire Line
 	9950 4200 10200 4200
 Wire Notes Line
@@ -746,11 +746,11 @@ F 1 "GND" H 1350 1530 30  0001 C CNN
 $EndComp
 Text Label 1500 1150 0    60   ~ 0
 TX
-Text Label 5900 4000 0    60   ~ 0
+Text Label 5900 2900 0    60   ~ 0
 TX
 Text Label 1500 1250 0    60   ~ 0
 RX
-Text Label 5900 3900 0    60   ~ 0
+Text Label 3550 4300 0    60   ~ 0
 RX
 $Comp
 L ENC28J60-1 U?
