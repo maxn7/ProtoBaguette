@@ -16,32 +16,25 @@
 /* User Functions                                                             */
 /******************************************************************************/
 
-/* TODO Initialize User Ports/Peripherals/Project here */
-
 void InitApp(void)
 {
-
     /* Setup analog functionality and port direction */
     mPORTASetPinsDigitalOut(BIT_0);  // Test LED
 
+    /* UART1 pin mapping */
     PPSInput (3,  U1RX, RPA4);
     mPORTASetPinsDigitalIn(BIT_4);
-
     PPSOutput(1,  RPB4, U1TX);
     mPORTBSetPinsDigitalOut(BIT_4);
 
-
+    /* SPI1 pin mapping */
     PPSInput (2,  SDI1, RPA1);
     mPORTASetPinsDigitalIn(BIT_1);
-    
     PPSOutput(3, RPB13, SDO1);
     mPORTBSetPinsDigitalOut(BIT_13);
-
+    //note : SPI1 is initialized by TCPIP Library
 
     /* Initialize peripherals */
-    //OpenSPI1(SPI_MODE32_ON | SPI_SMP_ON | MASTER_ENABLE_ON | SEC_PRESCAL_1_1 | PRI_PRESCAL_1_1, SPI_ENABLE);
-
     OpenUART1(UART_EN | UART_BRGH_SIXTEEN,  UART_RX_ENABLE | UART_TX_ENABLE, // take care to idle state
-            GetPeripheralClock()/(16*9600) - 1);
-    
+            GetPeripheralClock()/(16*9600) - 1);   
 }
