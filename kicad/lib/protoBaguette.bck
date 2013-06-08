@@ -1,8 +1,32 @@
-EESchema-DOCLIB  Version 2.0  Date: lun. 20 mai 2013 22:02:20 CEST
+EESchema-DOCLIB  Version 2.0  Date: sam. 08 juin 2013 13:31:53 CEST
+#
+$CMP 79L05
+D Linear Regulator -5V
+K POWER REGUL
+F regulator\lm79lxx.pdf
+$ENDCMP
 #
 $CMP HEADER_5
 D Symbole general de connecteur
 K CONN
+$ENDCMP
+#
+$CMP LM7905
+D Linear Regulator -5V
+K POWER REGUL
+F regulator\lm79xx.pdf
+$ENDCMP
+#
+$CMP LM7912
+D Linear Regulator -12V
+K POWER REGUL
+F regulator\lm79xx.pdf
+$ENDCMP
+#
+$CMP NX1117C
+D Linear Regulator -5V
+K POWER REGUL
+F regulator\lm79xx.pdf
 $ENDCMP
 #
 #End Doc Library
