@@ -101,11 +101,12 @@ int32_t main(void)
 enum baguette_states {
     BAGUETTE_INIT,
     BAGUETTE_CONNECT,
+    BAGUETTE_SSL_START,
     BAGUETTE_WORK,
     BAGUETTE_IDLE
 };
 
-static BYTE ServerName[] = "dallens.fr";
+static BYTE ServerName[] = "baguette.dallens.fr";
 
 // TODO : dallens.fr key is 2048 bit long and exceeds the 1024 limit.
 //#ifdef STACK_USE_SSL_CLIENT
@@ -113,7 +114,7 @@ static BYTE ServerName[] = "dallens.fr";
 //	// Note that if HTTPS is used, the ServerName and URL
 //	// must change to an SSL enabled server.
 //#else
-static WORD ServerPort = 80;
+static WORD ServerPort = 443;
 //#endif
 
 // Defines the URL to be requested by this HTTP client
@@ -148,17 +149,37 @@ static void BakeBaguette(void)
                 if (TickGet() - timer > 5 * TICK_SECOND) {
                     // Close the socket so it can be used by other modules
                     TCPDisconnect(sock);
+                    putsUART1((ROM char*)"# Socket not connected\r\n");
                     sock = INVALID_SOCKET;
                     state = BAGUETTE_INIT;
                 }
                 break;
             }
 
-//#ifdef STACK_USE_SSL_CLIENT
-//            if(!TCPStartSSLClient(MySocket, (void *)"thishost"))
-//                break;
-//            ...
-//#endif
+            if(!TCPStartSSLClient(sock, (void *)"unused")) {
+                putsUART1((ROM char*)"# Cannot start SSL\r\n");
+                break;
+            }
+
+            putsUART1((ROM char*)"Starting SSL...\r\n");
+
+            state = BAGUETTE_SSL_START;
+            break;
+
+        case BAGUETTE_SSL_START:
+            if (TCPSSLIsHandshaking(sock)) {
+                // Time out if too much time is spent in this state
+                if (TickGet() - timer > 100 * TICK_SECOND) {
+                    // Close the socket so it can be used by other modules
+                    TCPDisconnect(sock);
+                    putsUART1((ROM char*)"# SSL time out\r\n");
+                    sock = INVALID_SOCKET;
+                    state = BAGUETTE_INIT;
+                }//*/
+                break;
+            }
+
+            putsUART1((ROM char*)"Handshake OK...\r\n");
 
             // Make certain the socket can be written to
             //if (TCPIsPutReady(sock) < 200u)
