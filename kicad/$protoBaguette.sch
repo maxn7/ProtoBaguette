@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date dim. 09 juin 2013 16:31:18 CEST
+EESchema Schematic File Version 2  date dim. 09 juin 2013 18:51:20 CEST
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -36,10 +36,10 @@ EELAYER END
 $Descr A4 11700 8267
 encoding utf-8
 Sheet 1 1
-Title "Alpha prototype"
+Title "ProtoBaguette, first board"
 Date "9 jun 2013"
-Rev "0.1"
-Comp "ProtoBaguette"
+Rev "1.0"
+Comp "Hexabread"
 Comment1 ""
 Comment2 ""
 Comment3 ""
@@ -850,7 +850,7 @@ L C C8
 U 1 1 51AB26AF
 P 7500 1250
 F 0 "C8" H 7550 1350 50  0000 L CNN
-F 1 "100n?" H 7550 1150 50  0000 L CNN
+F 1 "10u" H 7550 1150 50  0000 L CNN
 	1    7500 1250
 	1    0    0    -1  
 $EndComp

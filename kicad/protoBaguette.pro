@@ -1,11 +1,6 @@
-update=lun. 20 mai 2013 19:44:17 CEST
+update=sam. 08 juin 2013 14:13:42 CEST
 version=1
-last_client=eeschema
-[cvpcb]
-version=1
-NetIExt=net
-[cvpcb/libraries]
-EquName1=devcms
+last_client=cvpcb
 [pcbnew]
 version=1
 PadDrlX=320
@@ -24,7 +19,6 @@ TxtLar=120
 MSegLar=150
 LastNetListRead=
 [pcbnew/libraries]
-LibDir=
 LibName1=sockets
 LibName2=connect
 LibName3=discret
@@ -36,6 +30,8 @@ LibName8=led
 LibName9=dip_sockets
 LibName10=pga_sockets
 LibName11=valves
+LibName12=lib/protoBaguette
+LibDir=
 [general]
 version=1
 [eeschema]
@@ -101,3 +97,8 @@ LibName28=atmel
 LibName29=contrib
 LibName30=lib/protoBaguette
 LibName31=valves
+[cvpcb]
+version=1
+NetIExt=net
+[cvpcb/libraries]
+EquName1=devcms
