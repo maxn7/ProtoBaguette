@@ -1,6 +1,6 @@
-update=sam. 08 juin 2013 14:13:42 CEST
+update=dim. 09 juin 2013 20:32:57 CEST
 version=1
-last_client=cvpcb
+last_client=eeschema
 [pcbnew]
 version=1
 PadDrlX=320
@@ -34,6 +34,11 @@ LibName12=lib/protoBaguette
 LibDir=
 [general]
 version=1
+[cvpcb]
+version=1
+NetIExt=net
+[cvpcb/libraries]
+EquName1=devcms
 [eeschema]
 version=1
 LibDir=
@@ -97,8 +102,3 @@ LibName28=atmel
 LibName29=contrib
 LibName30=lib/protoBaguette
 LibName31=valves
-[cvpcb]
-version=1
-NetIExt=net
-[cvpcb/libraries]
-EquName1=devcms
