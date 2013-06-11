@@ -46,6 +46,7 @@
       <itemPath>user.h</itemPath>
       <itemPath>HardwareProfile.h</itemPath>
       <itemPath>TCPIPConfig.h</itemPath>
+      <itemPath>../MCPTCPIP/src/websocket.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -80,6 +81,7 @@
       <itemPath>system.c</itemPath>
       <itemPath>user.c</itemPath>
       <itemPath>../MCPTCPIP/src/BigInt_helper_PIC32.S</itemPath>
+      <itemPath>../MCPTCPIP/src/websocket.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

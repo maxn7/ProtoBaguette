@@ -45,11 +45,11 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/66603954/IP.o ${OBJECTDIR}/_ext/66603954/ARP.o ${OBJECTDIR}/_ext/66603954/Tick.o ${OBJECTDIR}/_ext/66603954/Helpers.o ${OBJECTDIR}/_ext/66603954/ENC28J60.o ${OBJECTDIR}/_ext/66603954/Delay.o ${OBJECTDIR}/_ext/66603954/StackTsk.o ${OBJECTDIR}/configuration_bits.o ${OBJECTDIR}/exceptions.o ${OBJECTDIR}/interrupts.o ${OBJECTDIR}/main.o ${OBJECTDIR}/system.o ${OBJECTDIR}/user.o ${OBJECTDIR}/_ext/66603954/DHCP.o ${OBJECTDIR}/_ext/66603954/SSL.o ${OBJECTDIR}/_ext/66603954/TCP.o ${OBJECTDIR}/_ext/66603954/UDP.o ${OBJECTDIR}/_ext/66603954/ARCFOUR.o ${OBJECTDIR}/_ext/66603954/DNS.o ${OBJECTDIR}/_ext/66603954/RSA.o ${OBJECTDIR}/_ext/66603954/Hashes.o ${OBJECTDIR}/_ext/66603954/Random.o ${OBJECTDIR}/_ext/66603954/BigInt.o ${OBJECTDIR}/_ext/66603954/BigInt_helper_PIC32.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/66603954/IP.o.d ${OBJECTDIR}/_ext/66603954/ARP.o.d ${OBJECTDIR}/_ext/66603954/Tick.o.d ${OBJECTDIR}/_ext/66603954/Helpers.o.d ${OBJECTDIR}/_ext/66603954/ENC28J60.o.d ${OBJECTDIR}/_ext/66603954/Delay.o.d ${OBJECTDIR}/_ext/66603954/StackTsk.o.d ${OBJECTDIR}/configuration_bits.o.d ${OBJECTDIR}/exceptions.o.d ${OBJECTDIR}/interrupts.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/system.o.d ${OBJECTDIR}/user.o.d ${OBJECTDIR}/_ext/66603954/DHCP.o.d ${OBJECTDIR}/_ext/66603954/SSL.o.d ${OBJECTDIR}/_ext/66603954/TCP.o.d ${OBJECTDIR}/_ext/66603954/UDP.o.d ${OBJECTDIR}/_ext/66603954/ARCFOUR.o.d ${OBJECTDIR}/_ext/66603954/DNS.o.d ${OBJECTDIR}/_ext/66603954/RSA.o.d ${OBJECTDIR}/_ext/66603954/Hashes.o.d ${OBJECTDIR}/_ext/66603954/Random.o.d ${OBJECTDIR}/_ext/66603954/BigInt.o.d ${OBJECTDIR}/_ext/66603954/BigInt_helper_PIC32.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/66603954/IP.o ${OBJECTDIR}/_ext/66603954/ARP.o ${OBJECTDIR}/_ext/66603954/Tick.o ${OBJECTDIR}/_ext/66603954/Helpers.o ${OBJECTDIR}/_ext/66603954/ENC28J60.o ${OBJECTDIR}/_ext/66603954/Delay.o ${OBJECTDIR}/_ext/66603954/StackTsk.o ${OBJECTDIR}/_ext/66603954/DHCP.o ${OBJECTDIR}/_ext/66603954/SSL.o ${OBJECTDIR}/_ext/66603954/TCP.o ${OBJECTDIR}/_ext/66603954/UDP.o ${OBJECTDIR}/_ext/66603954/ARCFOUR.o ${OBJECTDIR}/_ext/66603954/DNS.o ${OBJECTDIR}/_ext/66603954/RSA.o ${OBJECTDIR}/_ext/66603954/Hashes.o ${OBJECTDIR}/_ext/66603954/Random.o ${OBJECTDIR}/_ext/66603954/BigInt.o ${OBJECTDIR}/configuration_bits.o ${OBJECTDIR}/exceptions.o ${OBJECTDIR}/interrupts.o ${OBJECTDIR}/main.o ${OBJECTDIR}/system.o ${OBJECTDIR}/user.o ${OBJECTDIR}/_ext/66603954/BigInt_helper_PIC32.o ${OBJECTDIR}/_ext/66603954/websocket.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/66603954/IP.o.d ${OBJECTDIR}/_ext/66603954/ARP.o.d ${OBJECTDIR}/_ext/66603954/Tick.o.d ${OBJECTDIR}/_ext/66603954/Helpers.o.d ${OBJECTDIR}/_ext/66603954/ENC28J60.o.d ${OBJECTDIR}/_ext/66603954/Delay.o.d ${OBJECTDIR}/_ext/66603954/StackTsk.o.d ${OBJECTDIR}/_ext/66603954/DHCP.o.d ${OBJECTDIR}/_ext/66603954/SSL.o.d ${OBJECTDIR}/_ext/66603954/TCP.o.d ${OBJECTDIR}/_ext/66603954/UDP.o.d ${OBJECTDIR}/_ext/66603954/ARCFOUR.o.d ${OBJECTDIR}/_ext/66603954/DNS.o.d ${OBJECTDIR}/_ext/66603954/RSA.o.d ${OBJECTDIR}/_ext/66603954/Hashes.o.d ${OBJECTDIR}/_ext/66603954/Random.o.d ${OBJECTDIR}/_ext/66603954/BigInt.o.d ${OBJECTDIR}/configuration_bits.o.d ${OBJECTDIR}/exceptions.o.d ${OBJECTDIR}/interrupts.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/system.o.d ${OBJECTDIR}/user.o.d ${OBJECTDIR}/_ext/66603954/BigInt_helper_PIC32.o.d ${OBJECTDIR}/_ext/66603954/websocket.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/_ext/66603954/IP.o ${OBJECTDIR}/_ext/66603954/ARP.o ${OBJECTDIR}/_ext/66603954/Tick.o ${OBJECTDIR}/_ext/66603954/Helpers.o ${OBJECTDIR}/_ext/66603954/ENC28J60.o ${OBJECTDIR}/_ext/66603954/Delay.o ${OBJECTDIR}/_ext/66603954/StackTsk.o ${OBJECTDIR}/configuration_bits.o ${OBJECTDIR}/exceptions.o ${OBJECTDIR}/interrupts.o ${OBJECTDIR}/main.o ${OBJECTDIR}/system.o ${OBJECTDIR}/user.o ${OBJECTDIR}/_ext/66603954/DHCP.o ${OBJECTDIR}/_ext/66603954/SSL.o ${OBJECTDIR}/_ext/66603954/TCP.o ${OBJECTDIR}/_ext/66603954/UDP.o ${OBJECTDIR}/_ext/66603954/ARCFOUR.o ${OBJECTDIR}/_ext/66603954/DNS.o ${OBJECTDIR}/_ext/66603954/RSA.o ${OBJECTDIR}/_ext/66603954/Hashes.o ${OBJECTDIR}/_ext/66603954/Random.o ${OBJECTDIR}/_ext/66603954/BigInt.o ${OBJECTDIR}/_ext/66603954/BigInt_helper_PIC32.o
+OBJECTFILES=${OBJECTDIR}/_ext/66603954/IP.o ${OBJECTDIR}/_ext/66603954/ARP.o ${OBJECTDIR}/_ext/66603954/Tick.o ${OBJECTDIR}/_ext/66603954/Helpers.o ${OBJECTDIR}/_ext/66603954/ENC28J60.o ${OBJECTDIR}/_ext/66603954/Delay.o ${OBJECTDIR}/_ext/66603954/StackTsk.o ${OBJECTDIR}/_ext/66603954/DHCP.o ${OBJECTDIR}/_ext/66603954/SSL.o ${OBJECTDIR}/_ext/66603954/TCP.o ${OBJECTDIR}/_ext/66603954/UDP.o ${OBJECTDIR}/_ext/66603954/ARCFOUR.o ${OBJECTDIR}/_ext/66603954/DNS.o ${OBJECTDIR}/_ext/66603954/RSA.o ${OBJECTDIR}/_ext/66603954/Hashes.o ${OBJECTDIR}/_ext/66603954/Random.o ${OBJECTDIR}/_ext/66603954/BigInt.o ${OBJECTDIR}/configuration_bits.o ${OBJECTDIR}/exceptions.o ${OBJECTDIR}/interrupts.o ${OBJECTDIR}/main.o ${OBJECTDIR}/system.o ${OBJECTDIR}/user.o ${OBJECTDIR}/_ext/66603954/BigInt_helper_PIC32.o ${OBJECTDIR}/_ext/66603954/websocket.o
 
 
 CFLAGS=
@@ -132,36 +132,6 @@ ${OBJECTDIR}/_ext/66603954/StackTsk.o: ../MCPTCPIP/src/StackTsk.c  nbproject/Mak
 	@${RM} ${OBJECTDIR}/_ext/66603954/StackTsk.o.d 
 	@${FIXDEPS} "${OBJECTDIR}/_ext/66603954/StackTsk.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/_ext/66603954/StackTsk.o.d" -o ${OBJECTDIR}/_ext/66603954/StackTsk.o ../MCPTCPIP/src/StackTsk.c   
 	
-${OBJECTDIR}/configuration_bits.o: configuration_bits.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/configuration_bits.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/configuration_bits.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/configuration_bits.o.d" -o ${OBJECTDIR}/configuration_bits.o configuration_bits.c   
-	
-${OBJECTDIR}/exceptions.o: exceptions.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/exceptions.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/exceptions.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/exceptions.o.d" -o ${OBJECTDIR}/exceptions.o exceptions.c   
-	
-${OBJECTDIR}/interrupts.o: interrupts.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/interrupts.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/interrupts.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/interrupts.o.d" -o ${OBJECTDIR}/interrupts.o interrupts.c   
-	
-${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/main.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/main.o.d" -o ${OBJECTDIR}/main.o main.c   
-	
-${OBJECTDIR}/system.o: system.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/system.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/system.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/system.o.d" -o ${OBJECTDIR}/system.o system.c   
-	
-${OBJECTDIR}/user.o: user.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/user.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/user.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/user.o.d" -o ${OBJECTDIR}/user.o user.c   
-	
 ${OBJECTDIR}/_ext/66603954/DHCP.o: ../MCPTCPIP/src/DHCP.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/_ext/66603954 
 	@${RM} ${OBJECTDIR}/_ext/66603954/DHCP.o.d 
@@ -212,6 +182,41 @@ ${OBJECTDIR}/_ext/66603954/BigInt.o: ../MCPTCPIP/src/BigInt.c  nbproject/Makefil
 	@${RM} ${OBJECTDIR}/_ext/66603954/BigInt.o.d 
 	@${FIXDEPS} "${OBJECTDIR}/_ext/66603954/BigInt.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/_ext/66603954/BigInt.o.d" -o ${OBJECTDIR}/_ext/66603954/BigInt.o ../MCPTCPIP/src/BigInt.c   
 	
+${OBJECTDIR}/configuration_bits.o: configuration_bits.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/configuration_bits.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/configuration_bits.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/configuration_bits.o.d" -o ${OBJECTDIR}/configuration_bits.o configuration_bits.c   
+	
+${OBJECTDIR}/exceptions.o: exceptions.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/exceptions.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/exceptions.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/exceptions.o.d" -o ${OBJECTDIR}/exceptions.o exceptions.c   
+	
+${OBJECTDIR}/interrupts.o: interrupts.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/interrupts.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/interrupts.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/interrupts.o.d" -o ${OBJECTDIR}/interrupts.o interrupts.c   
+	
+${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/main.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/main.o.d" -o ${OBJECTDIR}/main.o main.c   
+	
+${OBJECTDIR}/system.o: system.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/system.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/system.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/system.o.d" -o ${OBJECTDIR}/system.o system.c   
+	
+${OBJECTDIR}/user.o: user.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/user.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/user.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/user.o.d" -o ${OBJECTDIR}/user.o user.c   
+	
+${OBJECTDIR}/_ext/66603954/websocket.o: ../MCPTCPIP/src/websocket.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/_ext/66603954 
+	@${RM} ${OBJECTDIR}/_ext/66603954/websocket.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/_ext/66603954/websocket.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/_ext/66603954/websocket.o.d" -o ${OBJECTDIR}/_ext/66603954/websocket.o ../MCPTCPIP/src/websocket.c   
+	
 else
 ${OBJECTDIR}/_ext/66603954/IP.o: ../MCPTCPIP/src/IP.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/_ext/66603954 
@@ -247,36 +252,6 @@ ${OBJECTDIR}/_ext/66603954/StackTsk.o: ../MCPTCPIP/src/StackTsk.c  nbproject/Mak
 	@${MKDIR} ${OBJECTDIR}/_ext/66603954 
 	@${RM} ${OBJECTDIR}/_ext/66603954/StackTsk.o.d 
 	@${FIXDEPS} "${OBJECTDIR}/_ext/66603954/StackTsk.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/_ext/66603954/StackTsk.o.d" -o ${OBJECTDIR}/_ext/66603954/StackTsk.o ../MCPTCPIP/src/StackTsk.c   
-	
-${OBJECTDIR}/configuration_bits.o: configuration_bits.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/configuration_bits.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/configuration_bits.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/configuration_bits.o.d" -o ${OBJECTDIR}/configuration_bits.o configuration_bits.c   
-	
-${OBJECTDIR}/exceptions.o: exceptions.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/exceptions.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/exceptions.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/exceptions.o.d" -o ${OBJECTDIR}/exceptions.o exceptions.c   
-	
-${OBJECTDIR}/interrupts.o: interrupts.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/interrupts.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/interrupts.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/interrupts.o.d" -o ${OBJECTDIR}/interrupts.o interrupts.c   
-	
-${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/main.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/main.o.d" -o ${OBJECTDIR}/main.o main.c   
-	
-${OBJECTDIR}/system.o: system.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/system.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/system.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/system.o.d" -o ${OBJECTDIR}/system.o system.c   
-	
-${OBJECTDIR}/user.o: user.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/user.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/user.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/user.o.d" -o ${OBJECTDIR}/user.o user.c   
 	
 ${OBJECTDIR}/_ext/66603954/DHCP.o: ../MCPTCPIP/src/DHCP.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/_ext/66603954 
@@ -327,6 +302,41 @@ ${OBJECTDIR}/_ext/66603954/BigInt.o: ../MCPTCPIP/src/BigInt.c  nbproject/Makefil
 	@${MKDIR} ${OBJECTDIR}/_ext/66603954 
 	@${RM} ${OBJECTDIR}/_ext/66603954/BigInt.o.d 
 	@${FIXDEPS} "${OBJECTDIR}/_ext/66603954/BigInt.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/_ext/66603954/BigInt.o.d" -o ${OBJECTDIR}/_ext/66603954/BigInt.o ../MCPTCPIP/src/BigInt.c   
+	
+${OBJECTDIR}/configuration_bits.o: configuration_bits.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/configuration_bits.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/configuration_bits.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/configuration_bits.o.d" -o ${OBJECTDIR}/configuration_bits.o configuration_bits.c   
+	
+${OBJECTDIR}/exceptions.o: exceptions.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/exceptions.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/exceptions.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/exceptions.o.d" -o ${OBJECTDIR}/exceptions.o exceptions.c   
+	
+${OBJECTDIR}/interrupts.o: interrupts.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/interrupts.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/interrupts.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/interrupts.o.d" -o ${OBJECTDIR}/interrupts.o interrupts.c   
+	
+${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/main.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/main.o.d" -o ${OBJECTDIR}/main.o main.c   
+	
+${OBJECTDIR}/system.o: system.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/system.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/system.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/system.o.d" -o ${OBJECTDIR}/system.o system.c   
+	
+${OBJECTDIR}/user.o: user.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR} 
+	@${RM} ${OBJECTDIR}/user.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/user.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/user.o.d" -o ${OBJECTDIR}/user.o user.c   
+	
+${OBJECTDIR}/_ext/66603954/websocket.o: ../MCPTCPIP/src/websocket.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/_ext/66603954 
+	@${RM} ${OBJECTDIR}/_ext/66603954/websocket.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/_ext/66603954/websocket.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"../picClient.X" -I"../MCPTCPIP/inc" -MMD -MF "${OBJECTDIR}/_ext/66603954/websocket.o.d" -o ${OBJECTDIR}/_ext/66603954/websocket.o ../MCPTCPIP/src/websocket.c   
 	
 endif
 

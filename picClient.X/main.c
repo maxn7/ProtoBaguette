@@ -83,7 +83,7 @@ int32_t main(void)
 
         StackApplications();
 
-        BakeBaguette();
+        WebsocketTask();
     }
 
 
@@ -97,146 +97,6 @@ int32_t main(void)
     }*/
 }
 
-
-enum baguette_states {
-    BAGUETTE_INIT,
-    BAGUETTE_CONNECT,
-    BAGUETTE_SSL_START,
-    BAGUETTE_WORK,
-    BAGUETTE_IDLE
-};
-
-static BYTE ServerName[] = "baguette.dallens.fr";
-
-// TODO : dallens.fr key is 2048 bit long and exceeds the 1024 limit.
-//#ifdef STACK_USE_SSL_CLIENT
-//    static WORD ServerPort = HTTPS_PORT;
-//	// Note that if HTTPS is used, the ServerName and URL
-//	// must change to an SSL enabled server.
-//#else
-static WORD ServerPort = 443;
-//#endif
-
-// Defines the URL to be requested by this HTTP client
-static ROM BYTE RemoteURL[] = "/ping.txt";
-
-
-static void BakeBaguette(void)
-{
-    static int        state = BAGUETTE_INIT;
-    static TCP_SOCKET sock;
-    static DWORD      timer;
-
-    // Pour tester lancer "nc -lv <port>" sur boxxy et attendre une connexion.
-    switch (state) {
-        case BAGUETTE_INIT:
-            sock = TCPOpen((DWORD)(PTR_BASE)&ServerName[0], TCP_OPEN_RAM_HOST, ServerPort, TCP_PURPOSE_BAGUETTE);
-
-            if (sock == INVALID_SOCKET) {
-                putsUART1((ROM char*)"# Invalid socket\r\n");
-                break;
-            }
-
-            putsUART1((ROM char*)"Connecting...\r\n");
-            state = BAGUETTE_CONNECT;
-            timer = TickGet();
-            break;
-
-        case BAGUETTE_CONNECT:
-            // Wait for the remote server to accept our connection request
-            if (!TCPIsConnected(sock)) {
-                // Time out if too much time is spent in this state
-                if (TickGet() - timer > 5 * TICK_SECOND) {
-                    // Close the socket so it can be used by other modules
-                    TCPDisconnect(sock);
-                    putsUART1((ROM char*)"# Socket not connected\r\n");
-                    sock = INVALID_SOCKET;
-                    state = BAGUETTE_INIT;
-                }
-                break;
-            }
-
-            if(!TCPStartSSLClient(sock, (void *)"unused")) {
-                putsUART1((ROM char*)"# Cannot start SSL\r\n");
-                break;
-            }
-
-            putsUART1((ROM char*)"Starting SSL...\r\n");
-
-            state = BAGUETTE_SSL_START;
-            break;
-
-        case BAGUETTE_SSL_START:
-            if (TCPSSLIsHandshaking(sock)) {
-                // Time out if too much time is spent in this state
-                if (TickGet() - timer > 100 * TICK_SECOND) {
-                    // Close the socket so it can be used by other modules
-                    TCPDisconnect(sock);
-                    putsUART1((ROM char*)"# SSL time out\r\n");
-                    sock = INVALID_SOCKET;
-                    state = BAGUETTE_INIT;
-                }//*/
-                break;
-            }
-
-            putsUART1((ROM char*)"Handshake OK...\r\n");
-
-            // Make certain the socket can be written to
-            //if (TCPIsPutReady(sock) < 200u)
-            //        break;
-
-            // Fill the transmit buffer.
-            TCPPutROMString(sock, (ROM BYTE*)"GET ");
-            TCPPutROMString(sock, RemoteURL);
-            TCPPutROMString(sock, (ROM BYTE*)" HTTP/1.0\r\nHost: ");
-            TCPPutString(sock, ServerName);
-            TCPPutROMString(sock, (ROM BYTE*)"\r\nConnection: close\r\n\r\n");
-
-            // Send the packet
-            TCPFlush(sock);
-
-            putsUART1((ROM char*)"Sending request...\r\n");
-            state = BAGUETTE_WORK;
-            break;
-
-        case BAGUETTE_WORK:
-            Nop();
-            
-            // Get count of RX bytes waiting
-            int w = TCPIsGetReady(sock);
-            BYTE vBuffer[9];
-
-            // Obtain and print the server reply
-            int i = sizeof(vBuffer) - 1;
-            vBuffer[i] = '\0';
-            while(w) {
-                if(w < i) {
-                    i = w;
-                    vBuffer[i] = '\0';
-                }
-                w -= TCPGetArray(sock, vBuffer, i);
-                putsUART1((char*)vBuffer);
-            }
-
-            while(BusyUART1());
-            WriteUART1('#');
-            while(BusyUART1());
-
-            // Check to see if the remote node has disconnected from us
-            if (!TCPIsConnected(sock)) {
-                putsUART1((ROM char*)"# Disconnected\r\n");
-                state = BAGUETTE_IDLE;
-            }
-            break;
-
-        case BAGUETTE_IDLE:
-            break;
-
-        default:
-            putsUART1((ROM char*)"# Unexpected state\r\n");
-            break;
-    }
-}
 
 
 // MAC Address Serialization using a MPLAB PM3 Programmer and
@@ -266,7 +126,7 @@ static void InitAppConfig(void)
         AppConfig.DefaultIPAddr.Val = AppConfig.MyIPAddr.Val;
         AppConfig.DefaultMask.Val = AppConfig.MyMask.Val;
         memcpypgm2ram(AppConfig.NetBIOSName, (ROM void*)MY_DEFAULT_HOST_NAME, 16);
-        AppConfig.Flags.bIsDHCPEnabled = TRUE;
+        AppConfig.Flags.bIsDHCPEnabled = FALSE; // TODO remove
         AppConfig.Flags.bInConfigMode = TRUE;
         memcpypgm2ram((void*)&AppConfig.MyMACAddr, (ROM void*)SerializedMACAddress, sizeof(AppConfig.MyMACAddr));
         AppConfig.MyMACAddr.v[0] = MY_DEFAULT_MAC_BYTE6;
