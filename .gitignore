@@ -26,3 +26,5 @@ Release
 *.vrb
 *.out
 *.bak
+.~lock*
+$*.*
