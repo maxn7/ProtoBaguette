@@ -10,7 +10,7 @@ import tornado.websocket
 # http://stackoverflow.com/questions/11695375/tornado-identify-track-connections-of-websockets
 
 host = "baguette.hexabread.com"
-port = 80
+port = 443
 channels = {}
 
 class WSHandler(tornado.websocket.WebSocketHandler):
@@ -59,13 +59,15 @@ ws.onmessage = function (evt) {
 
 
 application = tornado.web.Application([
-    (r"/channel/(.+)", WSHandler),
-    (r"/",             MainHandler),
-])
+        (r"/channel/(.+)", WSHandler),
+        (r"/",             MainHandler),
+    ],
+    **{"debug": "True"})
 
 if __name__ == "__main__":
     if port == 443:
-        ssl = {"certfile": "cert.pem", "keyfile": "cert.pem", "ssl_version": ssl.PROTOCOL_SSLv3}
+        ssl = {"certfile": "startssl2048.pem", "ssl_version": ssl.PROTOCOL_SSLv3}
+#        ssl = {"certfile": "autocert1024.pem", "ssl_version": ssl.PROTOCOL_SSLv3}
     else:
         ssl = None
     application.listen(port, address=host, ssl_options=ssl)
