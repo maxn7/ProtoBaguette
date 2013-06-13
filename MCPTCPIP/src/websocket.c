@@ -2,7 +2,17 @@
 #include "HardwareProfile.h"
 #include "TCPIP.h"
 #include "websocket.h"
+#include "Helpers.h"
 
+
+
+char dl_buffer[DL_BUFFER_LEN];
+int  dl_read_pos  = 0;
+int  dl_write_pos = 0;
+
+char ul_buffer[UL_BUFFER_LEN];
+int  ul_read_pos  = 0;
+int  ul_write_pos = 0;
 
 
 const ROM BYTE* ServerName = "baguette.hexabread.com"; // servername
@@ -17,9 +27,11 @@ WORD TCPMatch(TCP_SOCKET socket, BYTE *str) // Checks if the next bytes are as e
 BOOL WebsocketTask()
 {
     static DWORD timer;
-    static websocket_state state = WEBSOCKET_INIT;
+    static websocket_connexion_state state = WEBSOCKET_INIT;
+    static websocket_frame_state sending;
+    static websocket_frame_state receiving;
     static TCP_SOCKET socket;
-    static websocket_frame frame;
+    static websocket_frame receiving_frame;
     static int remaining_bytes;
 
     if(!TCPIsConnected(socket)
@@ -32,7 +44,7 @@ BOOL WebsocketTask()
     switch(state) {
         case WEBSOCKET_INIT:
             DEBUG_UART("Connecting...");
-            socket = TCPOpen((DWORD)(PTR_BASE)&ServerName[0], TCP_OPEN_ROM_HOST, SERVER_PORT, TCP_PURPOSE_DEFAULT);
+            socket = TCPOpen((DWORD)(PTR_BASE)&ServerName[0], TCP_OPEN_ROM_HOST, SERVER_PORT, TCP_PURPOSE_WEBSOCKET);
 
             if (socket == INVALID_SOCKET) {
                 DEBUG_UART("Invalid socket");
@@ -89,15 +101,12 @@ BOOL WebsocketTask()
             TCPPutROMString(socket, (ROM BYTE*)"\r\n"
                 "Authorization: Basic ");
             TCPPutROMString(socket, "QWxhZGRpbjpvcGVuIHNlc2FtZQ==");
-            TCPFlush(socket); // HACK?
+            TCPFlush(socket); // HACK? ou c'est juste le port pas au hasard
 
             state = WEBSOCKET_SENDING_HANDSHAKE;
             break;
 
         case WEBSOCKET_SENDING_HANDSHAKE:
-            if (TCPIsPutReady(socket) < 180u)
-                break;
-
             DEBUG_UART("Websocket handshake...");
 
             TCPPutROMString(socket, (ROM BYTE*) "\r\n"
@@ -166,8 +175,10 @@ BOOL WebsocketTask()
                 if (eol == 1) {
                     // Remove the CRLF and move to next state
                     TCPGetArray(socket, NULL, 2);
+                    sending = WEBSOCKET_FRAME_HEADER;
+                    receiving = WEBSOCKET_FRAME_HEADER;
                     DEBUG_UART("Frame reception...");
-                    state = WEBSOCKET_WAITING_FRAME_HEADER;
+                    state = WEBSOCKET_ESTABLISHED;
                     break;
                 }
 
@@ -175,58 +186,85 @@ BOOL WebsocketTask()
             }
             break;
 
-        case WEBSOCKET_WAITING_FRAME_HEADER:
-            if (TCPIsGetReady(socket) < 2)
-                break; // No header available yet.
+        case WEBSOCKET_ESTABLISHED:
+            if (receiving == WEBSOCKET_FRAME_HEADER) {
+                if (TCPIsGetReady(socket) >= 2) { // Header available
 
-            TCPGetArray(socket, frame.raw_data, 2);
+                    TCPGetArray(socket, receiving_frame.raw_data, 2);
 
-            if (frame.payload_len == 126 || frame.payload_len == 127) {
-                state = WEBSOCKET_WAITING_FRAME_EXT_LEN; // TODO
-                break;
+                    if (receiving_frame.payload_len == 126 || receiving_frame.payload_len == 127) {
+                        receiving = WEBSOCKET_FRAME_HEADER_EXT; // TODO
+                    }
+                    else {
+                        if (!receiving_frame.FIN) {
+                            DEBUG_UART("No FIN flag");
+                            state = WEBSOCKET_ERROR;
+                        }
+                        else if (receiving_frame.mask) {
+                            DEBUG_UART("MASK flag");
+                            state = WEBSOCKET_ERROR;
+                        }
+                        else if (receiving_frame.opcode == OPCODE_TEXT_FRAME || receiving_frame.opcode != OPCODE_BINARY_FRAME) {
+                            remaining_bytes = receiving_frame.payload_len;
+
+                            DEBUG_UART("Payload reception...");
+                            receiving = WEBSOCKET_FRAME_PAYLOAD;
+                        }
+                        else {
+                            DEBUG_UART("Unexpected frame type"); // TODO
+                            state = WEBSOCKET_ERROR;
+                        }
+                    }
+                }
             }
+            else if (receiving == WEBSOCKET_FRAME_PAYLOAD) {
+                int available_bytes = TCPIsGetReady(socket);
 
-            if (!frame.FIN) {
-                DEBUG_UART("No FIN flag");
-            }
-            else if (frame.mask) {
-                DEBUG_UART("MASK flag");
-            }
-            else if (frame.opcode == OPCODE_TEXT_FRAME || frame.opcode != OPCODE_BINARY_FRAME) {
-                remaining_bytes = frame.payload_len;
+                if (available_bytes >= remaining_bytes) {
+                    available_bytes = remaining_bytes;
+                    DEBUG_UART("Frame reception...");
+                    receiving = WEBSOCKET_FRAME_HEADER;
+                }
 
-                DEBUG_UART("Payload reception...");
-                state = WEBSOCKET_WAITING_FRAME_PAYLOAD;
-                break;
+                while (available_bytes && !U1STAbits.UTXBF) { // UART TX Buffer not full
+                    BYTE byte;
+                    if(TCPGet(socket, &byte) == FALSE) {
+                        DEBUG_UART("TCPGet error");
+                        state = WEBSOCKET_ERROR;
+                        break;
+                    }
+                    putcUART1(byte);
+                    remaining_bytes--;
+                    available_bytes--;
+                }
             }
             else {
-                DEBUG_UART("Unexpected frame type"); // TODO
+                DEBUG_UART("Unexpected receiving state");
+                state = WEBSOCKET_ERROR;
             }
 
-            state = WEBSOCKET_ERROR;
-            break;
 
-        case WEBSOCKET_WAITING_FRAME_PAYLOAD:
-            Nop();
-            
-            int available_bytes = TCPIsGetReady(socket);
+            if (sending == WEBSOCKET_FRAME_HEADER) {
+                if (TCPIsPutReady(socket) >= 2) { // Enough room for header
+                    websocket_frame sending_frame;
+                    sending_frame.FIN = 1;
+                    sending_frame.RSV = 0;
+                    sending_frame.mask = 1;
+                    sending_frame.opcode = OPCODE_BINARY_FRAME;
+                    sending_frame.masking_key = LFSRRand();
+                    sending_frame.payload_len = 0; // TODO
 
-            if (available_bytes >= remaining_bytes) {
-                available_bytes = remaining_bytes;
-                DEBUG_UART("Frame reception...");
-                state = WEBSOCKET_WAITING_FRAME_HEADER;
-            }
+                    TCPPutArray(socket, sending_frame.raw_data, 2);
 
-            while (available_bytes && !U1STAbits.UTXBF) { // UART TX Buffer not full
-                BYTE byte;
-                if(TCPGet(socket, &byte) == FALSE) {
-                    DEBUG_UART("TCPGet error");
-                    state = WEBSOCKET_ERROR;
-                    break;
+                    sending = WEBSOCKET_FRAME_PAYLOAD;
                 }
-                putcUART1(byte);
-                remaining_bytes--;
-                available_bytes--;
+            }
+            else if (sending == WEBSOCKET_FRAME_PAYLOAD) {
+                // TODO
+            }
+            else {
+                DEBUG_UART("Unexpected sending state");
+                state = WEBSOCKET_ERROR;
             }
 
             break;

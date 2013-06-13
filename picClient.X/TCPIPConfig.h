@@ -240,9 +240,9 @@
 
 	// Define names of socket types
 	#define TCP_SOCKET_TYPES
-		#define TCP_PURPOSE_GENERIC_TCP_CLIENT 0
-		#define TCP_PURPOSE_BAGUETTE 1
-		#define TCP_PURPOSE_DEFAULT  2
+		//#define TCP_PURPOSE_GENERIC_TCP_CLIENT 0
+		#define TCP_PURPOSE_WEBSOCKET 0
+		//#define TCP_PURPOSE_DEFAULT  2
 		/*#define TCP_PURPOSE_GENERIC_TCP_SERVER 1
 		#define TCP_PURPOSE_TELNET 2
 		#define TCP_PURPOSE_FTP_COMMAND 3
@@ -278,9 +278,8 @@
 			WORD wRXBufferSize;
 		} TCPSocketInitializer[] =
 		{
-			{TCP_PURPOSE_GENERIC_TCP_CLIENT, TCP_ETH_RAM, 125, 100},
-			{TCP_PURPOSE_BAGUETTE, TCP_ETH_RAM, 200, 200},
-                        {TCP_PURPOSE_DEFAULT, TCP_ETH_RAM, 200, 200},
+			{TCP_PURPOSE_WEBSOCKET, TCP_ETH_RAM, 1500, 500}, // The Websocket HTTP handshake alone is 300+ bytes, and max throughput is (Buffer Size)/(Ping Time).
+                        //{TCP_PURPOSE_DEFAULT, TCP_ETH_RAM, 200, 200},
 			/*
 			{TCP_PURPOSE_GENERIC_TCP_SERVER, TCP_ETH_RAM, 20, 20},
 			{TCP_PURPOSE_TELNET, TCP_ETH_RAM, 200, 150},

@@ -184,6 +184,7 @@
 		BYTE requestedMessage;				// Currently requested message to send, or 0xff
         void * supplementaryBuffer;
         BYTE supplementaryDataType;
+        ROM BYTE * host; // Expected host name on certificate
 	} SSL_STUB;
 
     typedef enum
@@ -304,7 +305,7 @@
 
 void SSLInit(void);
 
-BYTE SSLStartSession(TCP_SOCKET hTCP, void * buffer, BYTE supDataType);
+BYTE SSLStartSession(TCP_SOCKET hTCP, ROM BYTE * host, void * buffer, BYTE supDataType);
 void SSLTerminate(BYTE sslStubId);
 void SSLPeriodic(TCP_SOCKET hTCP, BYTE sslStubID);
 WORD SSLRxRecord(TCP_SOCKET hTCP, BYTE sslStubID);

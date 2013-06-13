@@ -4751,7 +4751,7 @@ static void TCPRAMCopyROM(PTR_BASE wDest, BYTE wDestType, ROM BYTE* wSource, WOR
 
   Parameters:
 	hTCP		- TCP connection to secure
-	host		- Expected host name on certificate (currently ignored)
+	host		- Expected host name on certificate
 
   Return Values:
 	TRUE 		- an SSL connection was initiated
@@ -4761,7 +4761,7 @@ static void TCPRAMCopyROM(PTR_BASE wDest, BYTE wDestType, ROM BYTE* wSource, WOR
 	The host parameter is currently ignored and is not validated.
   ***************************************************************************/
 #if defined(STACK_USE_SSL_CLIENT)
-BOOL TCPStartSSLClient(TCP_SOCKET hTCP, BYTE* host)
+BOOL TCPStartSSLClient(TCP_SOCKET hTCP, ROM BYTE* host)
 {
 	BYTE i;
 	
@@ -4777,7 +4777,7 @@ BOOL TCPStartSSLClient(TCP_SOCKET hTCP, BYTE* host)
 		return FALSE;
 	
 	// Try to start the session
-	MyTCBStub.sslStubID = SSLStartSession(hTCP, NULL, 0);
+	MyTCBStub.sslStubID = SSLStartSession(hTCP, host, NULL, 0);
 	
 	// Make sure a session stub was obtained
 	if(MyTCBStub.sslStubID == SSL_INVALID_ID)
@@ -4813,7 +4813,7 @@ BOOL TCPStartSSLClient(TCP_SOCKET hTCP, BYTE* host)
 
   Parameters:
 	hTCP			- TCP connection to secure
-	host			- Expected host name on certificate (currently ignored)
+	host			- Expected host name on certificate
 	buffer      	- Buffer for supplementary data return
 	suppDataType 	- Type of supplementary data to copy
 
@@ -4841,7 +4841,7 @@ BOOL TCPStartSSLClientEx(TCP_SOCKET hTCP, BYTE* host, void * buffer, BYTE suppDa
 		return FALSE;
 	
 	// Try to start the session
-	MyTCBStub.sslStubID = SSLStartSession(hTCP, buffer, suppDataType);
+	MyTCBStub.sslStubID = SSLStartSession(hTCP, host, buffer, suppDataType);
 	
 	// Make sure a session stub was obtained
 	if(MyTCBStub.sslStubID == SSL_INVALID_ID)
@@ -4900,7 +4900,7 @@ BOOL TCPStartSSLServer(TCP_SOCKET hTCP)
 		return TRUE;
 	
 	// Try to start the session
-	MyTCBStub.sslStubID = SSLStartSession(hTCP, NULL, 0);
+	MyTCBStub.sslStubID = SSLStartSession(hTCP, NULL, NULL, 0);
 	
 	// Make sure a session stub was obtained
 	if(MyTCBStub.sslStubID == SSL_INVALID_ID)

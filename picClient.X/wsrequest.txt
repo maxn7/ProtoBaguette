@@ -1,0 +1,8 @@
+GET /channel/12345678901234567890123456789012 HTTP/1.1\
+Host: baguette.hexabread.com\ 
+Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==\
+Upgrade: websocket\
+Connection: Upgrade\
+Sec-WebSocket-Protocol: baguette1.hexabread.com\
+Sec-WebSocket-Version: 13\
+Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\\\

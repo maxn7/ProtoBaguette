@@ -342,7 +342,7 @@ void SSLPeriodic(TCP_SOCKET hTCP, BYTE id)
   	SSL_INVALID_ID - insufficient SSL resources to start a new connection
   	others - the allocated SSL stub ID
   ***************************************************************************/
-BYTE SSLStartSession(TCP_SOCKET hTCP, void * buffer, BYTE supDataType)
+BYTE SSLStartSession(TCP_SOCKET hTCP, ROM BYTE * host, void * buffer, BYTE supDataType)
 {
 	BYTE i;
 	
@@ -366,6 +366,7 @@ BYTE SSLStartSession(TCP_SOCKET hTCP, void * buffer, BYTE supDataType)
 	sslStub.dwTemp.Val = 0;
 	sslStub.supplementaryBuffer = buffer;
     sslStub.supplementaryDataType = supDataType;
+    sslStub.host = host;
 
 	// Allocate handshake hashes for use, or fail
 	SSLHashAlloc(&sslStub.idMD5);
@@ -965,6 +966,9 @@ void SSLRxHandshake(TCP_SOCKET hTCP)
 #if defined(STACK_USE_SSL_CLIENT)
 static void SSLTxClientHello(TCP_SOCKET hTCP)
 {	
+    BYTE len;
+    BYTE host_len;
+    BYTE i;
 	// Restart the handshake hasher
 	HSStart();
 	
@@ -996,11 +1000,15 @@ static void SSLTxClientHello(TCP_SOCKET hTCP)
 	// Send handshake message header (hashed)
 	HSPut(hTCP, SSL_CLIENT_HELLO);
 	HSPut(hTCP, 0x00);				
-	HSPut(hTCP, 0x00);				// Message length is 40 bytes,
-	if(sslStub.Flags.bNewSession)	// plus 32 more if a session
-		HSPut(hTCP, 43);			// ID is being included.
-	else
-		HSPut(hTCP, 43+32);
+	HSPut(hTCP, 0x00);
+        len = 43;                   // Message length is 40 bytes,
+	if(!sslStub.Flags.bNewSession)	// plus 32 more if a session
+		len += 32;              // ID is being included.
+        if(sslStub.host) {
+            host_len = strlenpgm(sslStub.host);
+            len += 1 + host_len; // One byte for the name_type field
+        }
+	HSPut(hTCP, len);
 	
 	// Send 
 	HSPut(hTCP, SSL_VERSION_HI);
@@ -1029,6 +1037,14 @@ static void SSLTxClientHello(TCP_SOCKET hTCP)
 	// Put Compression Methods List (just null)
 	HSPut(hTCP, 0x01);
 	HSPut(hTCP, 0x00);
+
+        // Put the ServerNameList extension
+        HSPut(hTCP, 0x00); // NameType == host_name(0)
+        for(i = 0; i < host_len; i++)
+        {
+            HSPut(hTCP, sslStub.host[i]);
+        }
+
 	
 	// End the handshake and save the hash
 	HSEnd();

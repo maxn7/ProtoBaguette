@@ -289,7 +289,7 @@ WORD TCPGetTxFIFOFull(TCP_SOCKET hTCP);
 BOOL TCPAdjustFIFOSize(TCP_SOCKET hTCP, WORD wMinRXSize, WORD wMinTXSize, BYTE vFlags);
 
 #if defined(STACK_USE_SSL)
-BOOL TCPStartSSLClient(TCP_SOCKET hTCP, BYTE* host);
+BOOL TCPStartSSLClient(TCP_SOCKET hTCP, ROM BYTE* host);
 BOOL TCPStartSSLClientEx(TCP_SOCKET hTCP, BYTE* host, void * buffer, BYTE suppDataType);
 BOOL TCPStartSSLServer(TCP_SOCKET hTCP);
 BOOL TCPAddSSLListener(TCP_SOCKET hTCP, WORD port);

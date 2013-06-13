@@ -4,7 +4,7 @@
 
 #define DEBUG_UART(str)   putsUART1((ROM char*)str "\r\n")
 
-//#define WEBSOCKET_SECURE
+#define WEBSOCKET_SECURE
 
 #ifdef WEBSOCKET_SECURE
     #define SERVER_PORT   443
@@ -21,11 +21,17 @@ typedef enum
     WEBSOCKET_SENDING_HANDSHAKE,
     WEBSOCKET_HTTP_STATUS,
     WEBSOCKET_HTTP_HEADERS,
-    WEBSOCKET_WAITING_FRAME_HEADER,
-    WEBSOCKET_WAITING_FRAME_EXT_LEN,
-    WEBSOCKET_WAITING_FRAME_PAYLOAD,
+    WEBSOCKET_ESTABLISHED,
     WEBSOCKET_ERROR
-} websocket_state;
+} websocket_connexion_state;
+
+
+typedef enum
+{
+    WEBSOCKET_FRAME_HEADER,
+    WEBSOCKET_FRAME_HEADER_EXT,
+    WEBSOCKET_FRAME_PAYLOAD
+} websocket_frame_state;
 
 
 typedef enum
@@ -48,12 +54,19 @@ typedef struct
     unsigned char  FIN:1;
     unsigned char  payload_len:7;
     unsigned char  mask:1;
-    unsigned char  payload_data[0];
-    unsigned short ext_payload_len;
-    unsigned char  ext_payload_data[0];
-    unsigned int   cont_ext_payload_len;
-    unsigned char  cont_ext_payload_data[0];
+    unsigned short masking_key;
 } websocket_frame;
+
+#define DL_BUFFER_LEN   256
+#define UL_BUFFER_LEN   256
+
+extern char dl_buffer[DL_BUFFER_LEN];
+extern int  dl_read_pos;
+extern int  dl_write_pos;
+
+extern char ul_buffer[UL_BUFFER_LEN];
+extern int  ul_read_pos;
+extern int  ul_write_pos;
 
 
 #endif	/* WEBSOCKET_H */

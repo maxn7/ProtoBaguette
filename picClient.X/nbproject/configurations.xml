@@ -88,7 +88,6 @@
                    projectFiles="false">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
-    <itemPath>getting_started.txt</itemPath>
   </logicalFolder>
   <sourceRootList>
     <Elem>../MTCPIPStack</Elem>
