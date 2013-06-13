@@ -1039,10 +1039,12 @@ static void SSLTxClientHello(TCP_SOCKET hTCP)
 	HSPut(hTCP, 0x00);
 
         // Put the ServerNameList extension
-        HSPut(hTCP, 0x00); // NameType == host_name(0)
-        for(i = 0; i < host_len; i++)
-        {
-            HSPut(hTCP, sslStub.host[i]);
+        if(sslStub.host) {
+            HSPut(hTCP, 0x00); // NameType == host_name(0)
+            for(i = 0; i < host_len; i++)
+            {
+                HSPut(hTCP, sslStub.host[i]);
+            }
         }
 
 	
