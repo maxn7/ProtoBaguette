@@ -1006,7 +1006,7 @@ static void SSLTxClientHello(TCP_SOCKET hTCP)
 		len += 32;              // ID is being included.
         if(sslStub.host) {
             host_len = strlenpgm(sslStub.host);
-            len += 1 + host_len; // One byte for the name_type field
+            len += 11 + host_len;
         }
 	HSPut(hTCP, len);
 	
@@ -1040,7 +1040,23 @@ static void SSLTxClientHello(TCP_SOCKET hTCP)
 
         // Put the ServerNameList extension
         if(sslStub.host) {
+            HSPut(hTCP, 0x00);
+            HSPut(hTCP, 0x01); // Extension length
+
+            HSPut(hTCP, 0x00);
+            HSPut(hTCP, 0x00); // ExtensionType == server_name
+
+            HSPut(hTCP, 0x00);
+            HSPut(hTCP, 5 + host_len); // extension_data length in bytes
+
+            HSPut(hTCP, 0x00);
+            HSPut(hTCP, 0x01); // ServerNameList length
+
+            //HSPut(hTCP, 0x00);
             HSPut(hTCP, 0x00); // NameType == host_name(0)
+
+            HSPut(hTCP, 0x00);
+            HSPut(hTCP, host_len); // HostName length
             for(i = 0; i < host_len; i++)
             {
                 HSPut(hTCP, sslStub.host[i]);
