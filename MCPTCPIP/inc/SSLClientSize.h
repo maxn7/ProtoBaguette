@@ -1,7 +1,7 @@
 #ifndef __SSL_RSA_CLIENT_SIZE
 #define __SSL_RSA_CLIENT_SIZE
 
-	#define SSL_RSA_CLIENT_SIZE     (1024ul)    // Size of Encryption Buffer (must be larger than key size)
+	#define SSL_RSA_CLIENT_SIZE     (2048ul)    // Size of Encryption Buffer (must be larger than key size)
     #if SSL_RSA_CLIENT_SIZE < SSL_RSA_KEY_SIZE
         #error "SSL_RSA_CLIENT_SIZE must be >= SSL_RSA_KEY_SIZE"
     #endif
