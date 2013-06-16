@@ -2,7 +2,7 @@
 #define	WEBSOCKET_H
 
 
-#define DEBUG_UART(str)   putsUART1((ROM char*)str "\r\n")
+#define DEBUG_UART(str)   putsUART2((ROM char*)str "\r\n")
 
 #define WEBSOCKET_SECURE
 

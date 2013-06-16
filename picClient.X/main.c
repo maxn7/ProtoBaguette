@@ -48,7 +48,6 @@ int32_t main(void)
     SYS_CFG_PCACHE (configures the pCache if used)
     SYS_CFG_ALL (configures the flash wait states, PB bus, and pCache)*/
 
-    /* TODO Add user clock/system configuration code if appropriate.  */
     SYSTEMConfig(SYS_FREQ, SYS_CFG_ALL); 
 
     /* Initialize I/O and Peripherals for application */
@@ -60,6 +59,22 @@ int32_t main(void)
     should probably not use a Single Vector Mode*/
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
 
+    /* DEBUG RANDOM
+    RandomInit();
+    putsUART2((ROM char*)"Generating random...\r\n");
+    DWORD w = GenerateRandomDWORD();
+    char buf[16];
+
+    uitoa(w & 0x0000FFFF, buf);
+    putsUART2(buf);
+    
+    putsUART2((ROM char*)" ");
+    
+    uitoa(w >> 16, buf);
+    putsUART2(buf);
+
+    putsUART2((ROM char*)"\r\n");
+    //*/
 
     StackInit();
 
@@ -129,5 +144,4 @@ static void InitAppConfig(void)
         AppConfig.Flags.bIsDHCPEnabled = FALSE; // TODO remove
         AppConfig.Flags.bInConfigMode = TRUE;
         memcpypgm2ram((void*)&AppConfig.MyMACAddr, (ROM void*)SerializedMACAddress, sizeof(AppConfig.MyMACAddr));
-        AppConfig.MyMACAddr.v[0] = MY_DEFAULT_MAC_BYTE6;
 }
