@@ -71,7 +71,7 @@ BOOL WebsocketTask()
 
 #ifdef WEBSOCKET_SECURE
             DEBUG_UART("Starting SSL...");
-            if (!TCPStartSSLClient(socket, ServerName)) {
+            if (!TCPStartSSLClient(socket, NULL)) {
                 DEBUG_UART("Cannot start SSL");
                 state = WEBSOCKET_ERROR;
                 break;
