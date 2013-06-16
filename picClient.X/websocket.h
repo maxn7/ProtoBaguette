@@ -60,11 +60,11 @@ typedef struct
 #define DL_BUFFER_LEN   256
 #define UL_BUFFER_LEN   256
 
-extern char dl_buffer[DL_BUFFER_LEN];
+extern volatile char dl_buffer[DL_BUFFER_LEN];
 extern int  dl_read_pos;
 extern int  dl_write_pos;
 
-extern char ul_buffer[UL_BUFFER_LEN];
+extern volatile char ul_buffer[UL_BUFFER_LEN];
 extern int  ul_read_pos;
 extern int  ul_write_pos;
 

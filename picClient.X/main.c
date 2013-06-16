@@ -15,6 +15,7 @@
 //TCPIP stack 
 #include "HardwareProfile.h"
 #include "TCPIP.h"
+#include "websocket.h"
 
 static void BakeBaguette(void);
 static void InitAppConfig(void);
@@ -74,6 +75,20 @@ int32_t main(void)
     putsUART2(buf);
 
     putsUART2((ROM char*)"\r\n");
+    //*/
+
+    //* DEBUG DMA
+    int i = 0;
+    putsUART2("DEBUG Terminal\r\n");
+    INTEnableInterrupts();
+    while(1) {
+        while(i >= DmaChnGetDstPnt(DMA_CHANNEL0));
+        char buf[16];
+        uitoa(ul_buffer[i], buf);
+        putsUART2(buf);
+        putcUART2(' ');
+        i++;
+    }
     //*/
 
     StackInit();

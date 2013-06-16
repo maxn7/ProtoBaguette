@@ -6,11 +6,11 @@
 
 
 
-char dl_buffer[DL_BUFFER_LEN];
+volatile char dl_buffer[DL_BUFFER_LEN];
 int  dl_read_pos  = 0;
 int  dl_write_pos = 0;
 
-char ul_buffer[UL_BUFFER_LEN];
+volatile char ul_buffer[UL_BUFFER_LEN];
 int  ul_read_pos  = 0;
 int  ul_write_pos = 0;
 

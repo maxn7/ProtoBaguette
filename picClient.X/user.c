@@ -11,6 +11,8 @@
 #include <stdbool.h>         /* For true/false definition                     */
 #include "user.h"            /* variables/params used by user.c               */
 #include "HardwareProfile.h" /* For clock speed */
+#include "websocket.h"
+
 
 /******************************************************************************/
 /* User Functions                                                             */
@@ -45,4 +47,10 @@ void InitApp(void)
             GetPeripheralClock()/(16*9600) - 1);
     OpenUART2(UART_EN | UART_BRGH_SIXTEEN,  UART_RX_ENABLE | UART_TX_ENABLE, // take care to idle state
             GetPeripheralClock()/(16*9600) - 1);
+
+
+    DmaChnOpen(DMA_CHANNEL0, DMA_CHN_PRI0, DMA_OPEN_DEFAULT /*DMA_OPEN_AUTO*/);
+    DmaChnSetEventControl(DMA_CHANNEL0, DMA_EV_START_IRQ_EN | DMA_EV_START_IRQ(_UART1_RX_IRQ));
+    DmaChnSetTxfer(DMA_CHANNEL0, (void *)&U1RXREG, (void *)ul_buffer, 1, UL_BUFFER_LEN, 1);
+    DmaChnEnable(DMA_CHANNEL0);
 }
