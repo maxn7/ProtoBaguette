@@ -77,10 +77,8 @@ int32_t main(void)
     putsUART2((ROM char*)"\r\n");
     //*/
 
-    //* DEBUG DMA
+    /* DEBUG DMA
     int i = 0;
-    putsUART2("DEBUG Terminal\r\n");
-    INTEnableInterrupts();
     while(1) {
         while(i >= DmaChnGetDstPnt(DMA_CHANNEL0));
         char buf[16];
@@ -90,6 +88,11 @@ int32_t main(void)
         i++;
     }
     //*/
+    
+    // TODO HACK Make sure DMA_EV_BLOCK_DONE flag set
+    DmaChnSetTxfer(DMA_CHANNEL1, (void *)dl_buffer, (void *)&U1TXREG, 1, 1, 1);
+    DmaChnEnable(DMA_CHANNEL1);
+    //////////
 
     StackInit();
 

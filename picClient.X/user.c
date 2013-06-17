@@ -48,9 +48,15 @@ void InitApp(void)
     OpenUART2(UART_EN | UART_BRGH_SIXTEEN,  UART_RX_ENABLE | UART_TX_ENABLE, // take care to idle state
             GetPeripheralClock()/(16*9600) - 1);
 
+    putsUART1("\r\nUART1\r\n");
+    putsUART2("\r\nUART2\r\n");
 
     DmaChnOpen(DMA_CHANNEL0, DMA_CHN_PRI0, DMA_OPEN_DEFAULT /*DMA_OPEN_AUTO*/);
     DmaChnSetEventControl(DMA_CHANNEL0, DMA_EV_START_IRQ_EN | DMA_EV_START_IRQ(_UART1_RX_IRQ));
     DmaChnSetTxfer(DMA_CHANNEL0, (void *)&U1RXREG, (void *)ul_buffer, 1, UL_BUFFER_LEN, 1);
     DmaChnEnable(DMA_CHANNEL0);
+
+    DmaChnOpen(DMA_CHANNEL1, DMA_CHN_PRI0, DMA_OPEN_DEFAULT);
+    DmaChnSetEventControl(DMA_CHANNEL1, DMA_EV_START_IRQ_EN | DMA_EV_START_IRQ(_UART2_TX_IRQ));
+    //DmaChnSetEvEnableFlags(DMA_CHANNEL1, DMA_EV_BLOCK_DONE);
 }
