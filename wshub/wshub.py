@@ -50,9 +50,13 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.write("""<html><head><title>Tests ProtoBaguette</title></head><body>
+        self.write("""<html>
+<head>
+<title>Tests ProtoBaguette</title>
+</head>
+<body>
 <form onsubmit="conn(); return false">Channel : <input type="text" id="chan"> <input type="submit" value="Connect"></form>
-<form onsubmit="send(); return false">Message : <input type="text" id="message"> <input type="submit" value="Send"></form>
+<form onsubmit="send(); return false">Message : <input type="text" id="message" size="60"> <input type="submit" value="Send"></form>
 <pre id="log"></pre>
 <script>
 var ws = false;
@@ -61,17 +65,18 @@ function conn() {
       ws.close();
    ws = new WebSocket("%s://%s/channel/" + document.getElementById('chan').value);
    ws.onopen = function() {
-      ws.send("Hello\\n");
+      ws.send("Hello\\r\\n");
    };
    ws.onmessage = function (evt) {
       document.getElementById('log').innerText += evt.data;
    };
 }
 function send() {
-   ws.send(document.getElementById("message").value + "\\n");
+   ws.send(document.getElementById("message").value + "\\r\\n");
 }
 </script>
-</body></html>""" % (("wss" if port == 443 else "ws"), host))
+</body>
+</html>""" % (("wss" if port == 443 else "ws"), host))
 
 
 application = tornado.web.Application([
