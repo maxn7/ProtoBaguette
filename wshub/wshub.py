@@ -5,6 +5,8 @@ import tornado.ioloop
 import tornado.web
 import tornado.httpserver
 import tornado.websocket
+import base64
+
 
 # http://tornadogists.org/654157/
 # http://stackoverflow.com/questions/11695375/tornado-identify-track-connections-of-websockets
@@ -17,6 +19,10 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def open(self, arg):
         self.channel_id = arg
         self.join_channel()
+        auth = self.request.headers.get("Authorization")
+        if auth and auth.startswith("Basic "):
+            user, password = base64.decodestring(auth[6:]).split(':', 2)
+            print("User '%s', password '%s'" % (user, password))
 
     def on_message(self, message):
         for client in channels[self.channel_id]:
@@ -44,16 +50,26 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.write("""<html><head></head><body>
+        self.write("""<html><head><title>Tests ProtoBaguette</title></head><body>
+<form onsubmit="conn(); return false">Channel : <input type="text" id="chan"> <input type="submit" value="Connect"></form>
+<form onsubmit="send(); return false">Message : <input type="text" id="message"> <input type="submit" value="Send"></form>
 <pre id="log"></pre>
 <script>
-var ws = new WebSocket("%s://%s/channel/abc");
-ws.onopen = function() {
-   ws.send("Hello\\n");
-};
-ws.onmessage = function (evt) {
-   document.getElementById('log').innerText += evt.data;
-};
+var ws = false;
+function conn() {
+   if(ws)
+      ws.close();
+   ws = new WebSocket("%s://%s/channel/" + document.getElementById('chan').value);
+   ws.onopen = function() {
+      ws.send("Hello\\n");
+   };
+   ws.onmessage = function (evt) {
+      document.getElementById('log').innerText += evt.data;
+   };
+}
+function send() {
+   ws.send(document.getElementById("message").value + "\\n");
+}
 </script>
 </body></html>""" % (("wss" if port == 443 else "ws"), host))
 
@@ -66,8 +82,8 @@ application = tornado.web.Application([
 
 if __name__ == "__main__":
     if port == 443:
-        ssl = {"certfile": "startssl2048.pem", "ssl_version": ssl.PROTOCOL_SSLv3}
-#        ssl = {"certfile": "autocert1024.pem", "ssl_version": ssl.PROTOCOL_SSLv3}
+#        ssl = {"certfile": "startssl2048.pem", "ssl_version": ssl.PROTOCOL_SSLv3}
+        ssl = {"certfile": "autocert1024.pem", "ssl_version": ssl.PROTOCOL_SSLv3}
     else:
         ssl = None
     application.listen(port, address=host, ssl_options=ssl)
