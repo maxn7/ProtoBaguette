@@ -88,11 +88,6 @@ int32_t main(void)
         i++;
     }
     //*/
-    
-    // TODO HACK Make sure DMA_EV_BLOCK_DONE flag set
-    DmaChnSetTxfer(DMA_CHANNEL1, (void *)dl_buffer, (void *)&U1TXREG, 1, 1, 1);
-    DmaChnEnable(DMA_CHANNEL1);
-    //////////
 
     StackInit();
 

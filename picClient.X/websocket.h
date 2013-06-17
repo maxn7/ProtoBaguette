@@ -57,16 +57,14 @@ typedef struct
     unsigned short masking_key;
 } websocket_frame;
 
-#define DL_BUFFER_LEN   256
-#define UL_BUFFER_LEN   256
+#define TX_BUFFER_LEN   256
+#define RX_BUFFER_LEN   256
 
-extern volatile char dl_buffer[DL_BUFFER_LEN];
-extern int  dl_read_pos;
-extern int  dl_write_pos;
+#define TX_CHANNEL      DMA_CHANNEL0
+#define RX_CHANNEL      DMA_CHANNEL1
 
-extern volatile char ul_buffer[UL_BUFFER_LEN];
-extern int  ul_read_pos;
-extern int  ul_write_pos;
+extern volatile BYTE tx_buffer[TX_BUFFER_LEN];
+extern volatile BYTE rx_buffer[RX_BUFFER_LEN];
 
 
 #endif	/* WEBSOCKET_H */
