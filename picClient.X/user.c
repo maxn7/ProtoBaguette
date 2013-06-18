@@ -52,16 +52,15 @@ void InitApp(void)
     putsUART1("\r\nUART1\r\n");
     putsUART2("\r\nUART2\r\n");
 
-
     // Initialize DMA.
     DmaChnOpen(TX_CHANNEL, DMA_CHN_PRI0, DMA_OPEN_DEFAULT);
     DmaChnSetEventControl(TX_CHANNEL, DMA_EV_START_IRQ_EN | DMA_EV_START_IRQ(_UART1_TX_IRQ));
     DmaChnSetEvEnableFlags(TX_CHANNEL, DMA_EV_BLOCK_DONE); // We don't enable the interrupt.
     DmaChnSetEvFlags(TX_CHANNEL, DMA_EV_BLOCK_DONE);
 
-    DmaChnOpen(RX_CHANNEL, DMA_CHN_PRI0, DMA_OPEN_DEFAULT);
+    DmaChnOpen(RX_CHANNEL, DMA_CHN_PRI1, DMA_OPEN_DEFAULT);
     DmaChnSetEventControl(RX_CHANNEL, DMA_EV_START_IRQ_EN | DMA_EV_START_IRQ(_UART1_RX_IRQ));
-    DmaChnSetTxfer(RX_CHANNEL, (void *)&U1RXREG, (void *)rx_buffer, 1, RX_BUFFER_LEN, 1);
     DmaChnSetEvEnableFlags(RX_CHANNEL, DMA_EV_BLOCK_DONE); // We don't enable the interrupt.
+    DmaChnSetTxfer(RX_CHANNEL, (void *)&U1RXREG, (void *)rx_buffer, 1, 10, 1);
     DmaChnEnable(RX_CHANNEL);
 }

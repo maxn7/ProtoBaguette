@@ -86,7 +86,10 @@
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
                    projectFiles="false">
-      <itemPath>Makefile</itemPath>
+      <itemPath>../datasheet/32-bit-Peripheral-Library-Guide.pdf</itemPath>
+      <itemPath>../datasheet/PIC32MX1XX-2XX.pdf</itemPath>
+      <itemPath>../datasheet/TCP-IP Stack AN1108A.pdf</itemPath>
+      <itemPath>../datasheet/PIC32_DMA.pdf</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

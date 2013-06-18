@@ -23,8 +23,8 @@ BOOL WebsocketTask()
 {
     static DWORD timer;
     static websocket_connexion_state state = WEBSOCKET_INIT;
-    static websocket_frame_state sending;
-    static websocket_frame_state receiving;
+    static websocket_frame_state uploading;
+    static websocket_frame_state downloading;
     static TCP_SOCKET socket;
 
     if(!TCPIsConnected(socket)
@@ -168,8 +168,8 @@ BOOL WebsocketTask()
                 if (eol == 1) {
                     // Remove the CRLF and move to next state
                     TCPGetArray(socket, NULL, 2);
-                    sending = WEBSOCKET_FRAME_HEADER;
-                    receiving = WEBSOCKET_FRAME_HEADER;
+                    uploading = WEBSOCKET_FRAME_HEADER;
+                    downloading = WEBSOCKET_FRAME_HEADER;
                     DEBUG_UART("Frame reception...");
                     state = WEBSOCKET_ESTABLISHED;
                     break;
@@ -184,14 +184,14 @@ BOOL WebsocketTask()
 
             static int expected_bytes;
             static BYTE *cur_tx_buffer;
-            if (receiving == WEBSOCKET_FRAME_HEADER) {
+            if (downloading == WEBSOCKET_FRAME_HEADER) {
                 if (TCPIsGetReady(socket) >= 2) { // Header available
                     static websocket_frame receiving_frame;
 
                     TCPGetArray(socket, receiving_frame.raw_data, 2);
 
                     if (receiving_frame.payload_len == 126 || receiving_frame.payload_len == 127) {
-                        receiving = WEBSOCKET_FRAME_HEADER_EXT; // TODO larger DMA ?
+                        downloading = WEBSOCKET_FRAME_HEADER_EXT; // TODO larger DMA ?
                     }
                     else {
                         if (!receiving_frame.FIN) {
@@ -205,7 +205,7 @@ BOOL WebsocketTask()
                         else if (receiving_frame.opcode == OPCODE_TEXT_FRAME || receiving_frame.opcode != OPCODE_BINARY_FRAME) {
                             expected_bytes = receiving_frame.payload_len;
                             cur_tx_buffer = (BYTE *)tx_buffer;
-                            receiving = WEBSOCKET_FRAME_PAYLOAD;
+                            downloading = WEBSOCKET_FRAME_PAYLOAD;
                         }
                         else {
                             DEBUG_UART("Unexpected frame type"); // TODO ping etc
@@ -214,7 +214,7 @@ BOOL WebsocketTask()
                     }
                 }
             }
-            else if (receiving == WEBSOCKET_FRAME_PAYLOAD) {
+            else if (downloading == WEBSOCKET_FRAME_PAYLOAD) {
                 if (DmaChnGetEvFlags(TX_CHANNEL) & DMA_EV_BLOCK_DONE) { // No transfer running.
                     int available_bytes = min(min(TCPIsGetReady(socket), TX_BUFFER_LEN), expected_bytes);
 
@@ -232,7 +232,7 @@ BOOL WebsocketTask()
                         DmaChnEnable(TX_CHANNEL);
 
                         DEBUG_UART("Frame forwarded.");
-                        receiving = WEBSOCKET_FRAME_HEADER;
+                        downloading = WEBSOCKET_FRAME_HEADER;
                     }
                 }
             }
@@ -244,14 +244,14 @@ BOOL WebsocketTask()
 
             static int remaining_payload;
             static BYTE *cur_rx_buffer;
-            if (sending == WEBSOCKET_FRAME_HEADER) {
+            if (uploading == WEBSOCKET_FRAME_HEADER) {
                 if (TCPIsPutReady(socket) >= 2) { // Enough room for the header
                     DmaChnDisable(RX_CHANNEL);
                     if (DmaChnGetEvFlags(RX_CHANNEL) & DMA_EV_BLOCK_DONE) { // We reached the end of the buffer.
                         remaining_payload = RX_BUFFER_LEN;
                     }
                     else {
-                        remaining_payload = DmaChnGetCellPnt(RX_CHANNEL);
+                        remaining_payload = DmaChnGetDstPnt(RX_CHANNEL);
                     }
                     DmaChnAbortTxfer(RX_CHANNEL);
 
@@ -267,14 +267,14 @@ BOOL WebsocketTask()
                         TCPPutArray(socket, sending_frame.raw_data, 2);
                         cur_rx_buffer = (BYTE *)rx_buffer;
 
-                        sending = WEBSOCKET_FRAME_PAYLOAD;
+                        uploading = WEBSOCKET_FRAME_PAYLOAD;
                     }
                     else {
                         DmaChnEnable(RX_CHANNEL);
                     }
                 }
             }
-            else if (sending == WEBSOCKET_FRAME_PAYLOAD) {
+            else if (uploading == WEBSOCKET_FRAME_PAYLOAD) {
                 int bytes_to_send = min(remaining_payload, TCPIsPutReady(socket));
                 int written = TCPPutArray(socket, cur_rx_buffer, bytes_to_send);
                 if (written < bytes_to_send) {
@@ -288,7 +288,7 @@ BOOL WebsocketTask()
                 if (remaining_payload == 0) {
                     DmaChnEnable(RX_CHANNEL);
                     DEBUG_UART("Frame sent.");
-                    sending = WEBSOCKET_FRAME_HEADER;
+                    uploading = WEBSOCKET_FRAME_HEADER;
                 }
             }
             else {
