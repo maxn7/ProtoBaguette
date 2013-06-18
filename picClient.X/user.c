@@ -1,22 +1,18 @@
-/******************************************************************************/
-/* Files to Include                                                           */
-/******************************************************************************/
 
 #ifdef __XC32
-    #include <xc.h>          /* Defines special funciton registers, CP0 regs  */
+    #include <xc.h>
 #endif
 
-#include <plib.h>            /* Include to use PIC32 peripheral libraries     */
-#include <stdint.h>          /* For uint32_t definition                       */
-#include <stdbool.h>         /* For true/false definition                     */
-#include "user.h"            /* variables/params used by user.c               */
-#include "HardwareProfile.h" /* For clock speed */
+#include <plib.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include "user.h"
+#include "HardwareProfile.h"
 #include "websocket.h"
 
 
-/******************************************************************************/
-/* User Functions                                                             */
-/******************************************************************************/
+BYTE channel[] = "test1"; // TODO flash variable
+BYTE identifier[] = "DEADBEEF:1234567"; // TODO flash variable
 
 void InitApp(void)
 {

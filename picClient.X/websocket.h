@@ -54,7 +54,7 @@ typedef struct
     unsigned char  FIN:1;
     unsigned char  payload_len:7;
     unsigned char  mask:1;
-    unsigned short masking_key;
+    unsigned long  masking_key;
 } websocket_frame;
 
 #define TX_BUFFER_LEN   256

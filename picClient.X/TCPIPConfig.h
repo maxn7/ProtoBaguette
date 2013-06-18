@@ -92,7 +92,7 @@
 //#define STACK_USE_BERKELEY_API			// Berekely Sockets APIs are available
 //#define STACK_USE_ZEROCONF_LINK_LOCAL	// Zeroconf IPv4 Link-Local Addressing
 //#define STACK_USE_ZEROCONF_MDNS_SD		// Zeroconf mDNS and mDNS service discovery
-
+#define STACK_USE_BASE64_ENCODE
 
 // =======================================================================
 //   Data Storage Options

@@ -3,6 +3,7 @@
 #include "TCPIP.h"
 #include "websocket.h"
 #include "Helpers.h"
+#include "user.h"
 
 
 
@@ -87,13 +88,14 @@ BOOL WebsocketTask()
             DEBUG_UART("Websocket handshake...");
 
             TCPPutROMString(socket, (ROM BYTE*)"GET /channel/");
-            TCPPutString(socket, "abc");
-            TCPPutROMString(socket, (ROM BYTE*)" HTTP/1.1\r\n"
-                "Host: ");
+            TCPPutString(socket, channel);
+            TCPPutROMString(socket, (ROM BYTE*)" HTTP/1.1\r\nHost: ");
             TCPPutROMString(socket, ServerName);
-            TCPPutROMString(socket, (ROM BYTE*)"\r\n"
-                "Authorization: Basic ");
-            TCPPutROMString(socket, "QWxhZGRpbjpvcGVuIHNlc2FtZQ==");
+            TCPPutROMString(socket, (ROM BYTE*)"\r\nAuthorization: Basic ");
+            BYTE auth[(sizeof(identifier) - 1) * 4 / 3 + 2];
+            int auth_len = Base64Encode(identifier, strlen(identifier), auth, sizeof(auth));
+            TCPPutArray(socket, auth, auth_len);
+            
             TCPFlush(socket); // HACK? ou c'est juste le port pas au hasard
 
             state = WEBSOCKET_SENDING_HANDSHAKE;
@@ -108,8 +110,17 @@ BOOL WebsocketTask()
                 "Sec-WebSocket-Protocol: baguette1.hexabread.com\r\n"
                 "Sec-WebSocket-Version: 13\r\n"
                 "Sec-WebSocket-Key: ");
-            TCPPutString(socket, "dGhlIHNhbXBsZSBub25jZQ==");
-            TCPPutROMString(socket, (ROM BYTE*)"\r\n\r\n");
+
+            WORD nonce[8]; // 16 random bytes.
+            int i;
+            for(i = 0; i < sizeof(nonce); i++) {
+                nonce[i] = LFSRRand();
+            }
+            BYTE key[sizeof(nonce) * 4 / 3 + 2];
+            int key_len = Base64Encode((BYTE*)nonce, sizeof(nonce), key, sizeof(key));
+            TCPPutArray(socket, key, key_len);
+
+            TCPPutROMString(socket, (ROM BYTE*)"\r\n\r\n"); // End of headers.
 
             TCPFlush(socket);
 
@@ -244,6 +255,7 @@ BOOL WebsocketTask()
 
             static int remaining_payload;
             static BYTE *cur_rx_buffer;
+            static long masking_key;
             if (uploading == WEBSOCKET_FRAME_HEADER) {
                 if (TCPIsPutReady(socket) >= 2) { // Enough room for the header
                     DmaChnDisable(RX_CHANNEL);
@@ -256,12 +268,14 @@ BOOL WebsocketTask()
                     DmaChnAbortTxfer(RX_CHANNEL);
 
                     if (remaining_payload) {
+                        masking_key = LFSRRand() << 16 | LFSRRand();
+
                         websocket_frame sending_frame;
                         sending_frame.FIN = 1;
                         sending_frame.RSV = 0;
                         sending_frame.mask = 1;
                         sending_frame.opcode = OPCODE_BINARY_FRAME;
-                        sending_frame.masking_key = LFSRRand();
+                        sending_frame.masking_key = masking_key;
                         sending_frame.payload_len = remaining_payload;
 
                         TCPPutArray(socket, sending_frame.raw_data, 2);
@@ -276,6 +290,11 @@ BOOL WebsocketTask()
             }
             else if (uploading == WEBSOCKET_FRAME_PAYLOAD) {
                 int bytes_to_send = min(remaining_payload, TCPIsPutReady(socket));
+                int i;
+                for(i = 0; i < bytes_to_send; i++) { // Masking.
+                    cur_rx_buffer[i] ^= ((char*)&masking_key)[i % 4];
+                }
+
                 int written = TCPPutArray(socket, cur_rx_buffer, bytes_to_send);
                 if (written < bytes_to_send) {
                     DEBUG_UART("Unable to send");
