@@ -21,8 +21,11 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         self.join_channel()
         auth = self.request.headers.get("Authorization")
         if auth and auth.startswith("Basic "):
-            user, password = base64.decodestring(auth[6:]).split(':', 2)
-            print("User '%s', password '%s'" % (user, password))
+            try:
+                user, password = base64.decodestring(auth[6:]).split(':', 2)
+                print("User '%s', password '%s'" % (user, password))
+            except:
+                print("Invalid authorization '%s'" % auth)
 
     def on_message(self, message):
         for client in channels[self.channel_id]:
