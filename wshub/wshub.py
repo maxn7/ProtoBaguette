@@ -6,7 +6,7 @@ import tornado.web
 import tornado.httpserver
 import tornado.websocket
 import base64
-
+import socket
 
 # http://tornadogists.org/654157/
 # http://stackoverflow.com/questions/11695375/tornado-identify-track-connections-of-websockets
@@ -19,6 +19,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def open(self, arg):
         self.channel_id = arg
         self.join_channel()
+
         auth = self.request.headers.get("Authorization")
         if auth and auth.startswith("Basic "):
             try:
@@ -27,7 +28,17 @@ class WSHandler(tornado.websocket.WebSocketHandler):
             except:
                 print("Invalid authorization '%s'" % auth)
 
+        # 10 seconds keep alive
+        sock = self.request.connection.stream.socket
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPIDLE, 30)
+        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, 10)
+        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, 3)
+
     def on_message(self, message):
+        self.write_to_channel(message)
+
+    def write_to_channel(self, message):
         for client in channels[self.channel_id]:
             if client != self:
                 client.write_message(message)
@@ -45,6 +56,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def quit_channel(self):
         channel = channels[self.channel_id]
         channel.remove(self)
+        self.write_to_channel("Dude disconnected\r\n")
         
         if not channel:
             del channels[self.channel_id]
@@ -90,8 +102,8 @@ application = tornado.web.Application([
 
 if __name__ == "__main__":
     if port == 443:
-#        ssl = {"certfile": "startssl2048.pem", "ssl_version": ssl.PROTOCOL_SSLv3}
-        ssl = {"certfile": "autocert1024.pem", "ssl_version": ssl.PROTOCOL_SSLv3}
+        ssl = {"certfile": "startssl2048.pem", "ssl_version": ssl.PROTOCOL_SSLv3}
+#        ssl = {"certfile": "autocert1024.pem", "ssl_version": ssl.PROTOCOL_SSLv3}
     else:
         ssl = None
     application.listen(port, address=host, ssl_options=ssl)
