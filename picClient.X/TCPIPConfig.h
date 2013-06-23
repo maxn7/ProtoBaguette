@@ -150,17 +150,17 @@
  */
 #define MY_DEFAULT_HOST_NAME			"BAGUETTE1"
 
-#define MY_DEFAULT_MAC_BYTE1            (0x04)	// Use the default of 00-04-A3-00-00-00
-#define MY_DEFAULT_MAC_BYTE2            (0x08)	// if using an ENCX24J600, MRF24WB0M, or
+#define MY_DEFAULT_MAC_BYTE1            (0x00)	// Use the default of 00-04-A3-00-00-00
+#define MY_DEFAULT_MAC_BYTE2            (0x04)	// if using an ENCX24J600, MRF24WB0M, or
 #define MY_DEFAULT_MAC_BYTE3            (0xA3)	// PIC32MX6XX/7XX internal Ethernet
-#define MY_DEFAULT_MAC_BYTE4            (0x10)	// controller and wish to use the
-#define MY_DEFAULT_MAC_BYTE5            (0x02)	// internal factory programmed MAC
-#define MY_DEFAULT_MAC_BYTE6            (0x30)	// address instead.
+#define MY_DEFAULT_MAC_BYTE4            (0x00)	// controller and wish to use the
+#define MY_DEFAULT_MAC_BYTE5            (0x00)	// internal factory programmed MAC
+#define MY_DEFAULT_MAC_BYTE6            (0x00)	// address instead.
 
-#define MY_DEFAULT_IP_ADDR_BYTE1        (192ul)
-#define MY_DEFAULT_IP_ADDR_BYTE2        (168ul)
+#define MY_DEFAULT_IP_ADDR_BYTE1        (0ul)
+#define MY_DEFAULT_IP_ADDR_BYTE2        (0ul)
 #define MY_DEFAULT_IP_ADDR_BYTE3        (0ul)
-#define MY_DEFAULT_IP_ADDR_BYTE4        (195ul)
+#define MY_DEFAULT_IP_ADDR_BYTE4        (0ul)
 
 #define MY_DEFAULT_MASK_BYTE1           (255ul)
 #define MY_DEFAULT_MASK_BYTE2           (255ul)
@@ -169,8 +169,8 @@
 
 #define MY_DEFAULT_GATE_BYTE1           (192ul)
 #define MY_DEFAULT_GATE_BYTE2           (168ul)
-#define MY_DEFAULT_GATE_BYTE3           (0ul)
-#define MY_DEFAULT_GATE_BYTE4           (254ul)
+#define MY_DEFAULT_GATE_BYTE3           (1ul)
+#define MY_DEFAULT_GATE_BYTE4           (1ul)
 
 #define MY_DEFAULT_PRIMARY_DNS_BYTE1	(8ul)
 #define MY_DEFAULT_PRIMARY_DNS_BYTE2	(8ul)
@@ -233,7 +233,7 @@
  */
 	// Allocate how much total RAM (in bytes) you want to allocate
 	// for use by your TCP TCBs, RX FIFOs, and TX FIFOs.
-	#define TCP_ETH_RAM_SIZE					(3900ul)
+	#define TCP_ETH_RAM_SIZE					(3072ul)
 	#define TCP_PIC_RAM_SIZE					(0ul)
 	#define TCP_SPI_RAM_SIZE					(0ul)
 	#define TCP_SPI_RAM_BASE_ADDRESS			(0x00)

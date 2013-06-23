@@ -10,6 +10,8 @@
 volatile BYTE tx_buffer[TX_BUFFER_LEN];
 volatile BYTE rx_buffer[RX_BUFFER_LEN];
 
+BYTE channel[] = "test1"; // TODO flash variable
+BYTE identifier[] = "baguette001:1234567"; // TODO flash variable
 
 const ROM BYTE* ServerName = "baguette.hexabread.com"; // servername
 
@@ -30,9 +32,12 @@ BOOL WebsocketTask()
 
     if(!TCPIsConnected(socket)
             && state != WEBSOCKET_INIT
-            && state != WEBSOCKET_CONNECTING) {
+            && state != WEBSOCKET_CONNECTING
+            && state != WEBSOCKET_FAILURE
+            && state != WEBSOCKET_RETRY
+            && state != WEBSOCKET_FATAL) {
         DEBUG_UART("Unexpected disconnection");
-        state = WEBSOCKET_ERROR;
+        state = WEBSOCKET_FAILURE;
     }
 
     switch(state) {
@@ -42,7 +47,7 @@ BOOL WebsocketTask()
 
             if (socket == INVALID_SOCKET) {
                 DEBUG_UART("Invalid socket");
-                state = WEBSOCKET_ERROR;
+                state = WEBSOCKET_FAILURE;
                 break;
             }
 
@@ -54,11 +59,9 @@ BOOL WebsocketTask()
             // Wait for the remote server to accept our connection request
             if (!TCPIsConnected(socket)) {
                 // Time out if too much time is spent in this state
-                if (TickGet() - timer > 10 * TICK_SECOND) {
-                    TCPDisconnect(socket);
-                    socket = INVALID_SOCKET;
-                    DEBUG_UART("Socket not connected");
-                    state = WEBSOCKET_ERROR;
+                if (TickGet() - timer > 10ull * TICK_SECOND) {
+                    DEBUG_UART("Socket connection timeout");
+                    state = WEBSOCKET_FAILURE;
                 }
                 break;
             }
@@ -67,7 +70,7 @@ BOOL WebsocketTask()
             DEBUG_UART("Starting SSL...");
             if (!TCPStartSSLClient(socket, NULL)) {
                 DEBUG_UART("Cannot start SSL");
-                state = WEBSOCKET_ERROR;
+                state = WEBSOCKET_FAILURE;
                 break;
             }
 
@@ -77,9 +80,9 @@ BOOL WebsocketTask()
         case WEBSOCKET_SSL_HANDSHAKING:
             if (TCPSSLIsHandshaking(socket)) {
                 // Time out if too much time is spent in this state
-                if (TickGet() - timer > 20 * TICK_SECOND) {
+                if (TickGet() - timer > 20ull * TICK_SECOND) {
                     DEBUG_UART("SSL time out");
-                    state = WEBSOCKET_ERROR;
+                    state = WEBSOCKET_FAILURE;
                 }
                 break;
             }
@@ -92,11 +95,9 @@ BOOL WebsocketTask()
             TCPPutROMString(socket, (ROM BYTE*)" HTTP/1.1\r\nHost: ");
             TCPPutROMString(socket, ServerName);
             TCPPutROMString(socket, (ROM BYTE*)"\r\nAuthorization: Basic ");
-            BYTE auth[(sizeof(identifier) - 1) * 4 / 3 + 2];
+            BYTE auth[(sizeof(identifier) - 1) * 4 / 3 + 2]; // For size see Base64Encode() remarks
             int auth_len = Base64Encode(identifier, strlen(identifier), auth, sizeof(auth));
             TCPPutArray(socket, auth, auth_len);
-            
-            TCPFlush(socket); // HACK? ou c'est juste le port pas au hasard
 
             state = WEBSOCKET_SENDING_HANDSHAKE;
             break;
@@ -104,6 +105,7 @@ BOOL WebsocketTask()
         case WEBSOCKET_SENDING_HANDSHAKE:
             DEBUG_UART("Websocket handshake...");
 
+            // TODO check available room or merge with previous case
             TCPPutROMString(socket, (ROM BYTE*) "\r\n"
                 "Upgrade: websocket\r\n"
                 "Connection: Upgrade\r\n"
@@ -122,8 +124,6 @@ BOOL WebsocketTask()
 
             TCPPutROMString(socket, (ROM BYTE*)"\r\n\r\n"); // End of headers.
 
-            TCPFlush(socket);
-
             state = WEBSOCKET_HTTP_STATUS;
             break;
 
@@ -135,19 +135,19 @@ BOOL WebsocketTask()
             if (eol == 0xffff) {
                 // First line isn't here yet
                 if (TCPGetRxFIFOFree(socket) == 0) {
-                    DEBUG_UART("Overflow");
-                    state = WEBSOCKET_ERROR;
+                    DEBUG_UART("Status overflow");
+                    state = WEBSOCKET_FAILURE;
                 }
-                else if ((LONG)(TickGet() - timer) > 30 * TICK_SECOND) {
-                    DEBUG_UART("Timeout");
-                    state = WEBSOCKET_ERROR;
+                else if ((LONG)(TickGet() - timer) > 30ull * TICK_SECOND) {
+                    DEBUG_UART("Status timeout");
+                    state = WEBSOCKET_FAILURE;
                 }
                 break;
             }
 
             if (TCPMatch(socket, "HTTP/1.1 101 ") != 0) {
                 DEBUG_UART("Wrong HTTP code");
-                state = WEBSOCKET_ERROR;
+                state = WEBSOCKET_FAILURE;
             }
             
             TCPGetArray(socket, NULL, eol + 1); // Discard first line.
@@ -165,12 +165,12 @@ BOOL WebsocketTask()
                 if (eol == 0xffff) {
                     // First line isn't here yet
                     if (TCPGetRxFIFOFree(socket) == 0) {
-                        DEBUG_UART("Overflow");
-                        state = WEBSOCKET_ERROR;
+                        DEBUG_UART("Header overflow");
+                        state = WEBSOCKET_FAILURE;
                     }
-                    else if ((LONG)(TickGet() - timer) > 35 * TICK_SECOND) {
-                        DEBUG_UART("Timeout");
-                        state = WEBSOCKET_ERROR;
+                    else if ((LONG)(TickGet() - timer) > 35ull * TICK_SECOND) {
+                        DEBUG_UART("Header timeout");
+                        state = WEBSOCKET_FAILURE;
                     }
                     break;
                 }
@@ -207,11 +207,11 @@ BOOL WebsocketTask()
                     else {
                         if (!receiving_frame.FIN) {
                             DEBUG_UART("No FIN flag");
-                            state = WEBSOCKET_ERROR;
+                            state = WEBSOCKET_FAILURE;
                         }
                         else if (receiving_frame.mask) {
                             DEBUG_UART("MASK flag");
-                            state = WEBSOCKET_ERROR;
+                            state = WEBSOCKET_FAILURE;
                         }
                         else if (receiving_frame.opcode == OPCODE_TEXT_FRAME || receiving_frame.opcode != OPCODE_BINARY_FRAME) {
                             expected_bytes = receiving_frame.payload_len;
@@ -220,7 +220,7 @@ BOOL WebsocketTask()
                         }
                         else {
                             DEBUG_UART("Unexpected frame type"); // TODO ping etc
-                            state = WEBSOCKET_ERROR;
+                            state = WEBSOCKET_FAILURE;
                         }
                     }
                 }
@@ -232,7 +232,7 @@ BOOL WebsocketTask()
                     int read = TCPGetArray(socket, (BYTE *)cur_tx_buffer, available_bytes);
                     if (read < available_bytes) {
                         DEBUG_UART("Disconnected");
-                        state = WEBSOCKET_ERROR;
+                        state = WEBSOCKET_FAILURE;
                         break;
                     }
                     expected_bytes -= available_bytes;
@@ -249,13 +249,13 @@ BOOL WebsocketTask()
             }
             else {
                 DEBUG_UART("Unexpected receiving state");
-                state = WEBSOCKET_ERROR;
+                state = WEBSOCKET_FAILURE;
             }
 
 
             static int remaining_payload;
             static BYTE *cur_rx_buffer;
-            static long masking_key;
+            static unsigned long masking_key;
             if (uploading == WEBSOCKET_FRAME_HEADER) {
                 if (TCPIsPutReady(socket) >= 2) { // Enough room for the header
                     DmaChnDisable(RX_CHANNEL);
@@ -266,9 +266,13 @@ BOOL WebsocketTask()
                         remaining_payload = DmaChnGetDstPnt(RX_CHANNEL);
                     }
                     DmaChnAbortTxfer(RX_CHANNEL);
-
+    
                     if (remaining_payload) {
-                        masking_key = LFSRRand() << 16 | LFSRRand();
+                        masking_key = ((DWORD)LFSRRand()) << 16 | LFSRRand();
+                        int i;
+                        for(i = 0; i < remaining_payload; i++) { // Masking.
+                            rx_buffer[i] ^= ((char*)&masking_key)[i % 4];
+                        }
 
                         websocket_frame sending_frame;
                         sending_frame.FIN = 1;
@@ -290,21 +294,20 @@ BOOL WebsocketTask()
             }
             else if (uploading == WEBSOCKET_FRAME_PAYLOAD) {
                 int bytes_to_send = min(remaining_payload, TCPIsPutReady(socket));
-                int i;
-                for(i = 0; i < bytes_to_send; i++) { // Masking.
-                    cur_rx_buffer[i] ^= ((char*)&masking_key)[i % 4];
-                }
 
                 int written = TCPPutArray(socket, cur_rx_buffer, bytes_to_send);
                 if (written < bytes_to_send) {
                     DEBUG_UART("Unable to send");
-                    state = WEBSOCKET_ERROR;
+                    state = WEBSOCKET_FAILURE;
                     break;
                 }
                 cur_rx_buffer += bytes_to_send;
                 remaining_payload -= bytes_to_send;
 
                 if (remaining_payload == 0) {
+                    DmaChnOpen(RX_CHANNEL, DMA_CHN_PRI1, DMA_OPEN_DEFAULT);
+                    DmaChnClrEvFlags(RX_CHANNEL, DMA_EV_ALL_EVNTS);
+                    DmaChnSetTxfer(RX_CHANNEL, (void *)&U1RXREG, (void *)rx_buffer, 1, 10, 1);
                     DmaChnEnable(RX_CHANNEL);
                     DEBUG_UART("Frame sent.");
                     uploading = WEBSOCKET_FRAME_HEADER;
@@ -312,19 +315,33 @@ BOOL WebsocketTask()
             }
             else {
                 DEBUG_UART("Unexpected sending state");
-                state = WEBSOCKET_ERROR;
+                state = WEBSOCKET_FAILURE;
             }
 
             break;
 
-        case WEBSOCKET_ERROR:
+        case WEBSOCKET_FAILURE:
+            TCPDisconnect(socket);
+
+            DEBUG_UART("  retrying in 10s");
+            state = WEBSOCKET_RETRY;
+            timer = TickGet();
+            break;
+
+        case WEBSOCKET_RETRY:
+            if (TickGet() - timer > 10ull * TICK_SECOND) {
+                state = WEBSOCKET_INIT;
+            }
+            break;
+
+        case WEBSOCKET_FATAL:
             DEBUG_UART("(unrecoverable error)");
             while(1);
             break;
 
         default:
             DEBUG_UART("Unexpected state");
-            state = WEBSOCKET_ERROR;
+            state = WEBSOCKET_FAILURE;
             break;
     }
 }

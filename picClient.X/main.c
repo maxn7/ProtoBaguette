@@ -49,6 +49,8 @@ int32_t main(void)
     is expensive from a timing perspective, so most applications
     should probably not use a Single Vector Mode*/
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
+    INTEnableInterrupts();
+    
 
     /* DEBUG RANDOM
     RandomInit();
@@ -80,6 +82,7 @@ int32_t main(void)
     //*/
 
     StackInit();
+    TickInit();
 
     // Now that all items are initialized, begin the co-operative
     // multitasking loop.  This infinite loop will continuously
@@ -120,11 +123,9 @@ static ROM BYTE SerializedMACAddress[6] = {MY_DEFAULT_MAC_BYTE1, MY_DEFAULT_MAC_
 //#pragma romdata
 static void InitAppConfig(void)
 {
-
         // Start out zeroing all AppConfig bytes to ensure all fields are
         // deterministic for checksum generation
-        memset((void*)&AppConfig, 0x00, sizeof(AppConfig));
-
+        //memset((void*)&AppConfig, 0x00, sizeof(AppConfig));
 
         AppConfig.MyIPAddr.Val = MY_DEFAULT_IP_ADDR_BYTE1 | MY_DEFAULT_IP_ADDR_BYTE2<<8ul | MY_DEFAULT_IP_ADDR_BYTE3<<16ul | MY_DEFAULT_IP_ADDR_BYTE4<<24ul;
         AppConfig.MyMask.Val = MY_DEFAULT_MASK_BYTE1 | MY_DEFAULT_MASK_BYTE2<<8ul | MY_DEFAULT_MASK_BYTE3<<16ul | MY_DEFAULT_MASK_BYTE4<<24ul;
@@ -134,7 +135,7 @@ static void InitAppConfig(void)
         AppConfig.DefaultIPAddr.Val = AppConfig.MyIPAddr.Val;
         AppConfig.DefaultMask.Val = AppConfig.MyMask.Val;
         memcpypgm2ram(AppConfig.NetBIOSName, (ROM void*)MY_DEFAULT_HOST_NAME, 16);
-        AppConfig.Flags.bIsDHCPEnabled = FALSE; // TODO remove
+        AppConfig.Flags.bIsDHCPEnabled = TRUE;
         AppConfig.Flags.bInConfigMode = TRUE;
         memcpypgm2ram((void*)&AppConfig.MyMACAddr, (ROM void*)SerializedMACAddress, sizeof(AppConfig.MyMACAddr));
 }
