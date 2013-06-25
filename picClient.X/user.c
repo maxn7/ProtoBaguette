@@ -11,8 +11,6 @@
 #include "websocket.h"
 
 
-BYTE channel[] = "test1"; // TODO flash variable
-BYTE identifier[] = "DEADBEEF:1234567"; // TODO flash variable
 
 void InitApp(void)
 {

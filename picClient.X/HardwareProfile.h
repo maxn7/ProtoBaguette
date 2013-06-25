@@ -52,6 +52,7 @@
 #define HARDWARE_PROFILE_H
 
 #include "Compiler.h"
+#include "system.h"
 
 
 // Define a macro describing this hardware set up (used in other files)
@@ -60,7 +61,7 @@
 
 // Clock frequency values
 // These directly influence timed events using the Tick module.  They also are used for UART and SPI baud rate generation.
-#define GetSystemClock()		(8000000ul)			// Hz
+#define GetSystemClock()		(SYS_FREQ)			// Hz
 #define GetInstructionClock()	(GetSystemClock()/1)	// Normally GetSystemClock()/4 for PIC18, GetSystemClock()/2 for PIC24/dsPIC, and GetSystemClock()/1 for PIC32.  Might need changing if using Doze modes.
 #define GetPeripheralClock()	(GetSystemClock()/1)	// Normally GetSystemClock()/4 for PIC18, GetSystemClock()/2 for PIC24/dsPIC, and GetSystemClock()/1 for PIC32.  Divisor may be different if using a PIC32 since it's configurable.
 
