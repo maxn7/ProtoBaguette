@@ -1,23 +1,44 @@
 #!/usr/bin/env python2
+# django auth http://tornadogists.org/654157/
 
+import base64
 import ssl
+import socket
+import time
 import tornado.ioloop
 import tornado.web
 import tornado.httpserver
 import tornado.websocket
-import base64
-import socket
 
-# http://tornadogists.org/654157/
-# http://stackoverflow.com/questions/11695375/tornado-identify-track-connections-of-websockets
 
-host = "baguette.hexabread.com"
-port = 443
+STATIC_PATH = "./static"
+CERTFILE = "startssl2048.pem" # "autocert1024.pem"
+HOST = "baguette.hexabread.com"
+PORT = 443
+
+PING_RESOLUTION = 5
+PING_START = 30
+PING_MAXIMUM = 60
+
 channels = {}
 
-class WSHandler(tornado.websocket.WebSocketHandler):
+def send_pings():
+    for channel_id, channel in channels.items():
+        for client in channel:
+            elapsed = time.time() - client.last_seen
+            if elapsed > PING_START and not client.ping_sent:
+                client.ping_sent = True
+                client.ping("")
+            elif elapsed > PING_MAXIMUM:
+                print("Ping timeout")
+                client.close()
+                client.on_close()
+
+class BaguetteHandler(tornado.websocket.WebSocketHandler):
     def open(self, arg):
         self.channel_id = arg
+        self.last_seen = time.time()
+        self.ping_sent = False
         self.join_channel()
 
         auth = self.request.headers.get("Authorization")
@@ -28,14 +49,15 @@ class WSHandler(tornado.websocket.WebSocketHandler):
             except:
                 print("Invalid authorization '%s'" % auth)
 
-        # 10 seconds keep alive
-        sock = self.request.connection.stream.socket
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
-        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPIDLE, 30)
-        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, 10)
-        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, 3)
+        #~ # 10 seconds keep alive
+        #~ sock = self.request.connection.stream.socket
+        #~ sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+        #~ sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPIDLE, 30)
+        #~ sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, 10)
+        #~ sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, 3)
 
     def on_message(self, message):
+        self.last_seen = time.time()
         self.write_to_channel(message)
 
     def write_to_channel(self, message):
@@ -45,6 +67,10 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
     def on_close(self):
         self.quit_channel()
+
+    def on_pong(self, data):
+        self.ping_sent = False
+        self.last_seen = time.time()
 
     def join_channel(self):
         if not self.channel_id in channels:
@@ -91,20 +117,28 @@ function send() {
 }
 </script>
 </body>
-</html>""" % (("wss" if port == 443 else "ws"), host))
+</html>""" % (("wss" if PORT == 443 else "ws"), HOST))
 
 
-application = tornado.web.Application([
-        (r"/channel/(.+)", WSHandler),
-        (r"/",             MainHandler),
-    ],
-    **{"debug": "True"})
+
 
 if __name__ == "__main__":
-    if port == 443:
-        ssl = {"certfile": "startssl2048.pem", "ssl_version": ssl.PROTOCOL_SSLv3}
-#        ssl = {"certfile": "autocert1024.pem", "ssl_version": ssl.PROTOCOL_SSLv3}
-    else:
-        ssl = None
-    application.listen(port, address=host, ssl_options=ssl)
-    tornado.ioloop.IOLoop.instance().start()
+    application = tornado.web.Application([
+            (r"/channel/(.+)", BaguetteHandler),
+            (r"/",             MainHandler),
+        ],
+        static_path=STATIC_PATH,
+        debug=True,
+        gzip=True)
+    
+    application.listen(PORT,
+                       address=HOST,
+                       ssl_options={"certfile": CERTFILE, "ssl_version": ssl.PROTOCOL_SSLv3})
+    
+    main_loop = tornado.ioloop.IOLoop.instance()
+    scheduler = tornado.ioloop.PeriodicCallback(send_pings,
+                                                PING_RESOLUTION * 1000,
+                                                io_loop = main_loop)
+    
+    scheduler.start()
+    main_loop.start()
