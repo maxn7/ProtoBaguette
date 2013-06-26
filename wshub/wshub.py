@@ -2,13 +2,15 @@
 # django auth http://tornadogists.org/654157/
 
 import base64
+import django.core.handlers.wsgi
 import ssl
 import socket
 import time
+import tornado.httpserver
 import tornado.ioloop
 import tornado.web
-import tornado.httpserver
 import tornado.websocket
+import tornado.wsgi
 
 
 STATIC_PATH = "./static"
@@ -49,16 +51,10 @@ class BaguetteHandler(tornado.websocket.WebSocketHandler):
             except:
                 print("Invalid authorization '%s'" % auth)
 
-        #~ # 10 seconds keep alive
-        #~ sock = self.request.connection.stream.socket
-        #~ sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
-        #~ sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPIDLE, 30)
-        #~ sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, 10)
-        #~ sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, 3)
-
     def on_message(self, message):
         self.last_seen = time.time()
         self.write_to_channel(message)
+        print("Received " + ':'.join(x.encode('hex') for x in message))
 
     def write_to_channel(self, message):
         for client in channels[self.channel_id]:
@@ -96,36 +92,18 @@ class MainHandler(tornado.web.RequestHandler):
 <title>Tests ProtoBaguette</title>
 </head>
 <body>
-<form onsubmit="conn(); return false">Channel : <input type="text" id="chan"> <input type="submit" value="Connect"></form>
-<form onsubmit="send(); return false">Message : <input type="text" id="message" size="60"> <input type="submit" value="Send"></form>
-<pre id="log"></pre>
-<script>
-var ws = false;
-function conn() {
-   if(ws)
-      ws.close();
-   ws = new WebSocket("%s://%s/channel/" + document.getElementById('chan').value);
-   ws.onopen = function() {
-      ws.send("Hello\\r\\n");
-   };
-   ws.onmessage = function (evt) {
-      document.getElementById('log').innerText += evt.data;
-   };
-}
-function send() {
-   ws.send(document.getElementById("message").value + "\\r\\n");
-}
-</script>
+<a href="/static/index.htm">Poupoupidou</a>
 </body>
-</html>""" % (("wss" if PORT == 443 else "ws"), HOST))
+</html>""")
 
 
-
-
-if __name__ == "__main__":
+def main():
+    django_wsgi = tornado.wsgi.WSGIContainer(django.core.handlers.wsgi.WSGIHandler())
+    
     application = tornado.web.Application([
             (r"/channel/(.+)", BaguetteHandler),
             (r"/",             MainHandler),
+            #(r".*", tornado.web.FallbackHandler, dict(fallback=django_wsgi)),
         ],
         static_path=STATIC_PATH,
         debug=True,
@@ -142,3 +120,7 @@ if __name__ == "__main__":
     
     scheduler.start()
     main_loop.start()
+
+
+if __name__ == "__main__":
+    main()
