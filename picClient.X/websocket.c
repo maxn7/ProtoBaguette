@@ -29,6 +29,8 @@ BOOL WebsocketTask()
     static websocket_frame_state uploading;
     static websocket_frame_state downloading;
     static TCP_SOCKET socket;
+    static int close_expected;
+    static int pong_expected;
 
     if(!TCPIsConnected(socket)
             && state != WEBSOCKET_INIT
@@ -181,6 +183,8 @@ BOOL WebsocketTask()
                     TCPGetArray(socket, NULL, 2);
                     uploading = WEBSOCKET_FRAME_HEADER;
                     downloading = WEBSOCKET_FRAME_HEADER;
+                    close_expected = 0;
+                    pong_expected = 0;
                     DEBUG_UART("Frame reception...");
                     state = WEBSOCKET_ESTABLISHED;
                     break;
@@ -213,13 +217,25 @@ BOOL WebsocketTask()
                             DEBUG_UART("MASK flag");
                             state = WEBSOCKET_FAILURE;
                         }
-                        else if (receiving_frame.opcode == OPCODE_TEXT_FRAME || receiving_frame.opcode != OPCODE_BINARY_FRAME) {
+                        else if (receiving_frame.opcode == OPCODE_TEXT_FRAME || receiving_frame.opcode == OPCODE_BINARY_FRAME) {
                             expected_bytes = receiving_frame.payload_len;
                             cur_tx_buffer = (BYTE *)tx_buffer;
                             downloading = WEBSOCKET_FRAME_PAYLOAD;
                         }
+                        else if (receiving_frame.opcode == OPCODE_CLOSE) {
+                            close_expected = 1;
+                        }
+                        else if (receiving_frame.opcode == OPCODE_PING) {
+                            if (receiving_frame.payload_len > 0) {
+                                DEBUG_UART("Ping has payload");
+                                state = WEBSOCKET_FAILURE;
+                            }
+                            else {
+                                pong_expected = 1;
+                            }
+                        }
                         else {
-                            DEBUG_UART("Unexpected frame type"); // TODO ping etc
+                            DEBUG_UART("Unexpected frame type");
                             state = WEBSOCKET_FAILURE;
                         }
                     }
@@ -258,37 +274,55 @@ BOOL WebsocketTask()
             static unsigned long masking_key;
             if (uploading == WEBSOCKET_FRAME_HEADER) {
                 if (TCPIsPutReady(socket) >= 2) { // Enough room for the header
-                    DmaChnDisable(RX_CHANNEL);
-                    if (DmaChnGetEvFlags(RX_CHANNEL) & DMA_EV_BLOCK_DONE) { // We reached the end of the buffer.
-                        remaining_payload = RX_BUFFER_LEN;
+                    websocket_frame sending_frame;
+                    sending_frame.FIN = 1;
+                    sending_frame.RSV = 0;
+                    sending_frame.mask = 1;
+
+                    if (close_expected) {
+                        sending_frame.opcode = OPCODE_CLOSE;
+                        sending_frame.payload_len = 0;
+                        TCPPutArray(socket, sending_frame.raw_data, 6);
+
+                        DEBUG_UART("Websocket closed");
+                        state = WEBSOCKET_FAILURE;
+                    }
+                    else if (pong_expected) {
+                        sending_frame.opcode = OPCODE_PONG;
+                        sending_frame.payload_len = 0;
+                        TCPPutArray(socket, sending_frame.raw_data, 6);
+
+                        pong_expected = 0;
                     }
                     else {
-                        remaining_payload = DmaChnGetDstPnt(RX_CHANNEL);
-                    }
-                    DmaChnAbortTxfer(RX_CHANNEL);
-    
-                    if (remaining_payload) {
-                        masking_key = ((DWORD)LFSRRand()) << 16 | LFSRRand();
-                        int i;
-                        for(i = 0; i < remaining_payload; i++) { // Masking.
-                            rx_buffer[i] ^= ((char*)&masking_key)[i % 4];
+                        DmaChnDisable(RX_CHANNEL);
+                        if (DmaChnGetEvFlags(RX_CHANNEL) & DMA_EV_BLOCK_DONE) { // We reached the end of the buffer.
+                            remaining_payload = RX_BUFFER_LEN;
                         }
+                        else {
+                            remaining_payload = DmaChnGetDstPnt(RX_CHANNEL);
+                        }
+                        DmaChnAbortTxfer(RX_CHANNEL);
 
-                        websocket_frame sending_frame;
-                        sending_frame.FIN = 1;
-                        sending_frame.RSV = 0;
-                        sending_frame.mask = 1;
-                        sending_frame.opcode = OPCODE_BINARY_FRAME;
-                        sending_frame.masking_key = masking_key;
-                        sending_frame.payload_len = remaining_payload;
+                        if (remaining_payload) {
+                            masking_key = ((DWORD)LFSRRand()) << 16 | LFSRRand();
+                            int i;
+                            for(i = 0; i < remaining_payload; i++) { // Masking.
+                                rx_buffer[i] ^= ((char*)&masking_key)[i % 4];
+                            }
 
-                        TCPPutArray(socket, sending_frame.raw_data, 2);
-                        cur_rx_buffer = (BYTE *)rx_buffer;
+                            sending_frame.opcode = OPCODE_TEXT_FRAME; // TODO binary
+                            sending_frame.masking_key = masking_key;
+                            sending_frame.payload_len = remaining_payload;
 
-                        uploading = WEBSOCKET_FRAME_PAYLOAD;
-                    }
-                    else {
-                        DmaChnEnable(RX_CHANNEL);
+                            TCPPutArray(socket, sending_frame.raw_data, 6);
+                            cur_rx_buffer = (BYTE *)rx_buffer;
+
+                            uploading = WEBSOCKET_FRAME_PAYLOAD;
+                        }
+                        else {
+                            DmaChnEnable(RX_CHANNEL);
+                        }
                     }
                 }
             }

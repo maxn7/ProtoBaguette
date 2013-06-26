@@ -42,7 +42,7 @@ typedef enum
     OPCODE_TEXT_FRAME = 1,
     OPCODE_BINARY_FRAME = 2,
 
-    OPCODE_CONNECTION_CLOSE = 8,
+    OPCODE_CLOSE = 8,
     OPCODE_PING = 9,
     OPCODE_PONG = 10
 } websocket_opcode;
