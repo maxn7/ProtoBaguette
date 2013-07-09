@@ -13,7 +13,7 @@ volatile BYTE rx_buffer[RX_BUFFER_LEN];
 BYTE channel[] = "test1"; // TODO flash variable
 BYTE identifier[] = "baguette001:1234567"; // TODO flash variable
 
-const ROM BYTE* ServerName = "baguette.hexabread.com"; // servername
+const ROM BYTE* ServerName = "hexabread.com"; // servername
 
 WORD TCPMatch(TCP_SOCKET socket, BYTE *str) // Checks if the next bytes are as expected.
 {
@@ -92,7 +92,7 @@ BOOL WebsocketTask()
 
             DEBUG_UART("Websocket handshake...");
 
-            TCPPutROMString(socket, (ROM BYTE*)"GET /channel/");
+            TCPPutROMString(socket, (ROM BYTE*)"GET /baguette/channel/");
             TCPPutString(socket, channel);
             TCPPutROMString(socket, (ROM BYTE*)" HTTP/1.1\r\nHost: ");
             TCPPutROMString(socket, ServerName);
