@@ -48,7 +48,7 @@ typedef enum
 } websocket_opcode;
 
 
-typedef struct
+typedef struct __attribute((packed))
 {
     unsigned char  raw_data[0];
     unsigned char  opcode:4;

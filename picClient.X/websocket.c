@@ -10,8 +10,7 @@
 volatile BYTE tx_buffer[TX_BUFFER_LEN];
 volatile BYTE rx_buffer[RX_BUFFER_LEN];
 
-BYTE channel[] = "test1"; // TODO flash variable
-BYTE identifier[] = "baguette001:1234567"; // TODO flash variable
+BYTE identifier[] = "ABCDEF:1234567890"; // TODO flash variable
 
 const ROM BYTE* ServerName = "hexabread.com"; // servername
 
@@ -93,7 +92,6 @@ BOOL WebsocketTask()
             DEBUG_UART("Websocket handshake...");
 
             TCPPutROMString(socket, (ROM BYTE*)"GET /baguette/channel/");
-            TCPPutString(socket, channel);
             TCPPutROMString(socket, (ROM BYTE*)" HTTP/1.1\r\nHost: ");
             TCPPutROMString(socket, ServerName);
             TCPPutROMString(socket, (ROM BYTE*)"\r\nAuthorization: Basic ");
@@ -308,7 +306,7 @@ BOOL WebsocketTask()
                             masking_key = ((DWORD)LFSRRand()) << 16 | LFSRRand();
                             int i;
                             for(i = 0; i < remaining_payload; i++) { // Masking.
-                                rx_buffer[i] ^= ((char*)&masking_key)[i % 4];
+                                rx_buffer[i] ^= ((BYTE*)&masking_key)[i % 4];
                             }
 
                             sending_frame.opcode = OPCODE_TEXT_FRAME; // TODO binary
@@ -340,8 +338,9 @@ BOOL WebsocketTask()
 
                 if (remaining_payload == 0) {
                     DmaChnOpen(RX_CHANNEL, DMA_CHN_PRI1, DMA_OPEN_DEFAULT);
-                    DmaChnClrEvFlags(RX_CHANNEL, DMA_EV_ALL_EVNTS);
-                    DmaChnSetTxfer(RX_CHANNEL, (void *)&U1RXREG, (void *)rx_buffer, 1, 10, 1);
+                    DmaChnSetEventControl(RX_CHANNEL, DMA_EV_START_IRQ_EN | DMA_EV_START_IRQ(_UART1_RX_IRQ));
+                    DmaChnSetEvEnableFlags(RX_CHANNEL, DMA_EV_BLOCK_DONE); // We don't enable the interrupt.
+                    DmaChnSetTxfer(RX_CHANNEL, (void *)&U1RXREG, (void *)rx_buffer, 1, RX_BUFFER_LEN, 1);
                     DmaChnEnable(RX_CHANNEL);
                     DEBUG_UART("Frame sent.");
                     uploading = WEBSOCKET_FRAME_HEADER;
