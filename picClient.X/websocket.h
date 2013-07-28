@@ -60,7 +60,7 @@ typedef struct __attribute((packed))
 } websocket_frame;
 
 #define TX_BUFFER_LEN   256
-#define RX_BUFFER_LEN   256
+#define RX_BUFFER_LEN   125 // Maximum size of a Websocket frame (not extended).
 
 #define TX_CHANNEL      DMA_CHANNEL0
 #define RX_CHANNEL      DMA_CHANNEL1

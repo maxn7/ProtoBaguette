@@ -10,7 +10,7 @@
 volatile BYTE tx_buffer[TX_BUFFER_LEN];
 volatile BYTE rx_buffer[RX_BUFFER_LEN];
 
-BYTE identifier[] = "ABCDEF:1234567890"; // TODO flash variable
+BYTE identifier[] = "ABCDEF:1234567890"; // TODO EEPROM variable
 
 const ROM BYTE* ServerName = "hexabread.com"; // servername
 
@@ -185,6 +185,7 @@ BOOL WebsocketTask()
                     pong_expected = 0;
                     DEBUG_UART("Frame reception...");
                     state = WEBSOCKET_ESTABLISHED;
+                    NO_ERROR = 1;
                     break;
                 }
 
@@ -195,7 +196,7 @@ BOOL WebsocketTask()
         case WEBSOCKET_ESTABLISHED:
             Nop();
 
-            static int expected_bytes;
+            static LONGLONG expected_bytes; // Signed 64 bits, so not all frame size are valid.
             static BYTE *cur_tx_buffer;
             if (downloading == WEBSOCKET_FRAME_HEADER) {
                 if (TCPIsGetReady(socket) >= 2) { // Header available
@@ -203,40 +204,56 @@ BOOL WebsocketTask()
 
                     TCPGetArray(socket, receiving_frame.raw_data, 2);
 
-                    if (receiving_frame.payload_len == 126 || receiving_frame.payload_len == 127) {
-                        downloading = WEBSOCKET_FRAME_HEADER_EXT; // TODO larger DMA ?
+                    if (!receiving_frame.FIN) {
+                        DEBUG_UART("No FIN flag");
+                        state = WEBSOCKET_FAILURE;
                     }
-                    else {
-                        if (!receiving_frame.FIN) {
-                            DEBUG_UART("No FIN flag");
-                            state = WEBSOCKET_FAILURE;
-                        }
-                        else if (receiving_frame.mask) {
-                            DEBUG_UART("MASK flag");
-                            state = WEBSOCKET_FAILURE;
-                        }
-                        else if (receiving_frame.opcode == OPCODE_TEXT_FRAME || receiving_frame.opcode == OPCODE_BINARY_FRAME) {
-                            expected_bytes = receiving_frame.payload_len;
-                            cur_tx_buffer = (BYTE *)tx_buffer;
-                            downloading = WEBSOCKET_FRAME_PAYLOAD;
-                        }
-                        else if (receiving_frame.opcode == OPCODE_CLOSE) {
-                            close_expected = 1;
-                        }
-                        else if (receiving_frame.opcode == OPCODE_PING) {
-                            if (receiving_frame.payload_len > 0) {
-                                DEBUG_UART("Ping has payload");
-                                state = WEBSOCKET_FAILURE;
-                            }
-                            else {
-                                pong_expected = 1;
-                            }
+                    else if (receiving_frame.mask) {
+                        DEBUG_UART("MASK flag");
+                        state = WEBSOCKET_FAILURE;
+                    }
+                    else if (receiving_frame.opcode == OPCODE_TEXT_FRAME || receiving_frame.opcode == OPCODE_BINARY_FRAME) {
+                        expected_bytes = receiving_frame.payload_len;
+                        cur_tx_buffer = (BYTE *)tx_buffer;
+                        if (expected_bytes == 126 || expected_bytes == 127) {
+                            downloading = WEBSOCKET_FRAME_HEADER_EXT;
                         }
                         else {
-                            DEBUG_UART("Unexpected frame type");
-                            state = WEBSOCKET_FAILURE;
+                            downloading = WEBSOCKET_FRAME_PAYLOAD;
                         }
                     }
+                    else if (receiving_frame.opcode == OPCODE_CLOSE) {
+                        close_expected = 1;
+                    }
+                    else if (receiving_frame.opcode == OPCODE_PING) {
+                        if (receiving_frame.payload_len > 0) {
+                            DEBUG_UART("Ping has payload"); // FIXME send this as a Close message instead.
+                            state = WEBSOCKET_FAILURE;
+                        }
+                        else {
+                            pong_expected = 1;
+                        }
+                    }
+                    else {
+                        DEBUG_UART("Unexpected frame type");
+                        state = WEBSOCKET_FAILURE;
+                    }
+                }
+            }
+            else if (downloading == WEBSOCKET_FRAME_HEADER_EXT) { // Extended payload length extraction
+                int len_bytes; // Number of bytes for the length.
+                if (expected_bytes == 127)
+                    len_bytes = 8;
+                else
+                    len_bytes = 2;
+                // FIXME : unkown limitation between 300 and 800 bytes.
+                if (TCPIsGetReady(socket) >= len_bytes) {
+                    BYTE b;
+                    expected_bytes = 0;
+                    while (len_bytes-- && TCPGet(socket, &b)) { // Convert from big to little endian.
+                        expected_bytes = (expected_bytes << 8) | b;
+                    }
+                    downloading = WEBSOCKET_FRAME_PAYLOAD;
                 }
             }
             else if (downloading == WEBSOCKET_FRAME_PAYLOAD) {
@@ -309,7 +326,7 @@ BOOL WebsocketTask()
                                 rx_buffer[i] ^= ((BYTE*)&masking_key)[i % 4];
                             }
 
-                            sending_frame.opcode = OPCODE_TEXT_FRAME; // TODO binary
+                            sending_frame.opcode = OPCODE_BINARY_FRAME;
                             sending_frame.masking_key = masking_key;
                             sending_frame.payload_len = remaining_payload;
 
@@ -337,11 +354,7 @@ BOOL WebsocketTask()
                 remaining_payload -= bytes_to_send;
 
                 if (remaining_payload == 0) {
-                    DmaChnOpen(RX_CHANNEL, DMA_CHN_PRI1, DMA_OPEN_DEFAULT);
-                    DmaChnSetEventControl(RX_CHANNEL, DMA_EV_START_IRQ_EN | DMA_EV_START_IRQ(_UART1_RX_IRQ));
-                    DmaChnSetEvEnableFlags(RX_CHANNEL, DMA_EV_BLOCK_DONE); // We don't enable the interrupt.
-                    DmaChnSetTxfer(RX_CHANNEL, (void *)&U1RXREG, (void *)rx_buffer, 1, RX_BUFFER_LEN, 1);
-                    DmaChnEnable(RX_CHANNEL);
+                    OpenRxDma();
                     DEBUG_UART("Frame sent.");
                     uploading = WEBSOCKET_FRAME_HEADER;
                 }
@@ -356,6 +369,7 @@ BOOL WebsocketTask()
         case WEBSOCKET_FAILURE:
             TCPDisconnect(socket);
 
+            NO_ERROR = 0;
             DEBUG_UART("  retrying in 10s");
             state = WEBSOCKET_RETRY;
             timer = TickGet();
