@@ -135,6 +135,14 @@
 #define ENC_SPIBRG		(SPI1BRG)
 #define ENC_SPISTATbits		(SPI1STATbits)
 
+// 25AA02E48 I/O pins
+#define EEPROM_CS_TRIS   	(TRISBbits.TRISB2)
+#define EEPROM_CS_IO		(PORTBbits.RB2)
+#define EEPROM_SSPBUF		(SPI1BUF)
+#define EEPROM_SPICON1		(SPI1CON)
+#define EEPROM_SPICON1bits	(SPI1CONbits)
+#define EEPROM_SPIBRG		(SPI1BRG)
+#define EEPROM_SPISTATbits	(SPI1STATbits)
 
 
 #endif // #ifndef HARDWARE_PROFILE_H

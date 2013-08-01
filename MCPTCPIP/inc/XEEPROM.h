@@ -58,13 +58,13 @@ typedef BOOL XEE_RESULT;
 
 #if defined(EEPROM_CS_TRIS)	
 	void XEEInit(void);
-	XEE_RESULT XEEBeginWrite(DWORD address);
+	XEE_RESULT XEEBeginWrite(BYTE address);
 	XEE_RESULT XEEWrite(BYTE val);
-	void XEEWriteArray(BYTE *val, WORD wLen);
+	void XEEWriteArray(BYTE *val, BYTE wLen);
 	XEE_RESULT XEEEndWrite(void);
-	XEE_RESULT XEEBeginRead(DWORD address);
+	XEE_RESULT XEEBeginRead(BYTE address);
 	BYTE XEERead(void);
-	XEE_RESULT XEEReadArray(DWORD address, BYTE *buffer, WORD length);
+	XEE_RESULT XEEReadArray(BYTE address, BYTE *buffer, BYTE length);
 	XEE_RESULT XEEEndRead(void);
 	BOOL XEEIsBusy(void);
 #else

@@ -73,13 +73,14 @@
 // cooperatively sharing the SPI bus with other peripherals, bytes
 // read and written to the memory are locally buffered. Legal
 // sizes are 1 to the EEPROM page size.
-#define EEPROM_BUFFER_SIZE              (32)
+#define EEPROM_BUFFER_SIZE              (16) // baguette
 
 // Must be the EEPROM write page size, or any binary power of 2 divisor.  If 
 // using a smaller number, make sure it is at least EEPROM_BUFFER_SIZE big for 
 // max performance.  Microchip 25LC256 uses 64 byte page size, 25LC1024 uses 
 // 256 byte page size, so 64 is compatible with both.
-#define EEPROM_PAGE_SIZE				(64)
+// baguette: 25AA02E48 uses 16
+#define EEPROM_PAGE_SIZE				(16)
 
 // EEPROM SPI opcodes
 #define OPCODE_READ    0x03    // Read data from memory array beginning at selected address
@@ -117,7 +118,7 @@
 
 static void DoWrite(void);
 
-static DWORD EEPROMAddress;
+static BYTE EEPROMAddress; // baguette
 static BYTE EEPROMBuffer[EEPROM_BUFFER_SIZE];
 static BYTE vBytesInBuffer;
 
@@ -156,9 +157,11 @@ void XEEInit(void)
     EEPROM_CS_IO = 1;
     EEPROM_CS_TRIS = 0;     // Drive SPI EEPROM chip select pin
 
-    EEPROM_SCK_TRIS = 0;    // Set SCK pin as an output
-    EEPROM_SDI_TRIS = 1;    // Make sure SDI pin is an input
-    EEPROM_SDO_TRIS = 0;    // Set SDO pin as an output
+    #if defined(__18CXX)
+        EEPROM_SCK_TRIS = 0;    // Set SCK pin as an output
+        EEPROM_SDI_TRIS = 1;    // Make sure SDI pin is an input
+        EEPROM_SDO_TRIS = 0;    // Set SDO pin as an output
+    #endif
 
     ClearSPIDoneFlag();
     #if defined(__C30__)
@@ -178,7 +181,7 @@ void XEEInit(void)
 
 
 /*********************************************************************
- * Function:        XEE_RESULT XEEBeginRead(DWORD address)
+ * Function:        XEE_RESULT XEEBeginRead(BYTE address) // baguette
  *
  * PreCondition:    None
  *
@@ -192,7 +195,7 @@ void XEEInit(void)
  *
  * Note:            None
  ********************************************************************/
-XEE_RESULT XEEBeginRead(DWORD address)
+XEE_RESULT XEEBeginRead(BYTE address) // baguette
 {
     // Save the address and emptry the contents of our local buffer
     EEPROMAddress = address;
@@ -255,9 +258,9 @@ XEE_RESULT XEEEndRead(void)
 
 
 /*********************************************************************
- * Function:        XEE_RESULT XEEReadArray(DWORD address,
+ * Function:        XEE_RESULT XEEReadArray(BYTE address, // baguette
  *                                          BYTE *buffer,
- *                                          WORD length)
+ *                                          BYTE length) // baguette
  *
  * PreCondition:    XEEInit() is already called.
  *
@@ -275,9 +278,9 @@ XEE_RESULT XEEEndRead(void)
  *
  * Note:            None
  ********************************************************************/
-XEE_RESULT XEEReadArray(DWORD address,
+XEE_RESULT XEEReadArray(BYTE address, // baguette
                         BYTE *buffer,
-                        WORD length)
+                        BYTE length) // baguette
 {
     volatile BYTE Dummy;
     BYTE vSPIONSave;
@@ -312,11 +315,11 @@ XEE_RESULT XEEReadArray(DWORD address,
     Dummy = EEPROM_SSPBUF;
     #endif
 
-    EEPROM_SSPBUF = ((DWORD_VAL*)&address)->v[1];
-    WaitForDataByte();
-    Dummy = EEPROM_SSPBUF;
+    //EEPROM_SSPBUF = ((DWORD_VAL*)&address)->v[1];
+    //WaitForDataByte();
+    //Dummy = EEPROM_SSPBUF;
 
-    EEPROM_SSPBUF = ((DWORD_VAL*)&address)->v[0];
+    EEPROM_SSPBUF = address; //((DWORD_VAL*)&address)->v[0];
     WaitForDataByte();
     Dummy = EEPROM_SSPBUF;
 
@@ -342,7 +345,7 @@ XEE_RESULT XEEReadArray(DWORD address,
 
 
 /*********************************************************************
- * Function:        XEE_RESULT XEEBeginWrite(DWORD address)
+ * Function:        XEE_RESULT XEEBeginWrite(BYTE address) // baguette
  *
  * PreCondition:    None
  *
@@ -360,7 +363,7 @@ XEE_RESULT XEEReadArray(DWORD address,
  *                  XEERead(), and XEEEndRead().
  *                  This function does not use the SPI bus.
  ********************************************************************/
-XEE_RESULT XEEBeginWrite(DWORD address)
+XEE_RESULT XEEBeginWrite(BYTE address) // baguette
 {
 	vBytesInBuffer = 0;
     EEPROMAddress = address;
@@ -401,7 +404,7 @@ XEE_RESULT XEEWrite(BYTE val)
 
 /*****************************************************************************
   Function:
-    XEE_RESULT XEEWriteArray(BYTE *val, WORD wLen)
+    XEE_RESULT XEEWriteArray(BYTE *val, BYTE wLen) // baguette
 
   Summary:
     Writes an array of bytes to the EEPROM part.
@@ -426,7 +429,7 @@ XEE_RESULT XEEWrite(BYTE val)
     to call XEEEndWrite() after calling this function.  However, if you do 
     so, no harm will be done.
   ***************************************************************************/
-void XEEWriteArray(BYTE *val, WORD wLen)
+void XEEWriteArray(BYTE *val, BYTE wLen) // baguette
 {
 	while(wLen--)
 		XEEWrite(*val++);
@@ -496,16 +499,6 @@ static void DoWrite(void)
     vDummy = EEPROM_SSPBUF;
 
     // Send address
-    #if defined(USE_EEPROM_25LC1024)
-    EEPROM_SSPBUF = ((DWORD_VAL*)&EEPROMAddress)->v[2];
-    WaitForDataByte();
-    vDummy = EEPROM_SSPBUF;
-    #endif
-
-    EEPROM_SSPBUF = ((DWORD_VAL*)&EEPROMAddress)->v[1];
-    WaitForDataByte();
-    vDummy = EEPROM_SSPBUF;
-
     EEPROM_SSPBUF = ((DWORD_VAL*)&EEPROMAddress)->v[0];
     WaitForDataByte();
     vDummy = EEPROM_SSPBUF;

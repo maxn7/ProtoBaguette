@@ -44,7 +44,7 @@ int32_t main(void)
     /* Initialize I/O and Peripherals for application */
     InitApp();
     InitAppConfig();
-
+    
     /*Configure Multivector Interrupt Mode.  Using Single Vector Mode
     is expensive from a timing perspective, so most applications
     should probably not use a Single Vector Mode*/
@@ -67,18 +67,6 @@ int32_t main(void)
     putsUART2(buf);
 
     putsUART2((ROM char*)"\r\n");
-    //*/
-
-    /* DEBUG DMA
-    int i = 0;
-    while(1) {
-        while(i >= DmaChnGetDstPnt(DMA_CHANNEL0));
-        char buf[16];
-        uitoa(ul_buffer[i], buf);
-        putsUART2(buf);
-        putcUART2(' ');
-        i++;
-    }
     //*/
 
     StackInit();
@@ -109,7 +97,6 @@ int32_t main(void)
 }
 
 
-
 // MAC Address Serialization using a MPLAB PM3 Programmer and
 // Serialized Quick Turn Programming (SQTP).
 // The advantage of using SQTP for programming the MAC Address is it
@@ -123,19 +110,22 @@ static ROM BYTE SerializedMACAddress[6] = {MY_DEFAULT_MAC_BYTE1, MY_DEFAULT_MAC_
 //#pragma romdata
 static void InitAppConfig(void)
 {
-        // Start out zeroing all AppConfig bytes to ensure all fields are
-        // deterministic for checksum generation
-        //memset((void*)&AppConfig, 0x00, sizeof(AppConfig));
+    // Start out zeroing all AppConfig bytes to ensure all fields are
+    // deterministic for checksum generation
+    //memset((void*)&AppConfig, 0x00, sizeof(AppConfig));
 
-        AppConfig.MyIPAddr.Val = MY_DEFAULT_IP_ADDR_BYTE1 | MY_DEFAULT_IP_ADDR_BYTE2<<8ul | MY_DEFAULT_IP_ADDR_BYTE3<<16ul | MY_DEFAULT_IP_ADDR_BYTE4<<24ul;
-        AppConfig.MyMask.Val = MY_DEFAULT_MASK_BYTE1 | MY_DEFAULT_MASK_BYTE2<<8ul | MY_DEFAULT_MASK_BYTE3<<16ul | MY_DEFAULT_MASK_BYTE4<<24ul;
-        AppConfig.MyGateway.Val = MY_DEFAULT_GATE_BYTE1 | MY_DEFAULT_GATE_BYTE2<<8ul | MY_DEFAULT_GATE_BYTE3<<16ul | MY_DEFAULT_GATE_BYTE4<<24ul;
-        AppConfig.PrimaryDNSServer.Val = MY_DEFAULT_PRIMARY_DNS_BYTE1 | MY_DEFAULT_PRIMARY_DNS_BYTE2<<8ul  | MY_DEFAULT_PRIMARY_DNS_BYTE3<<16ul  | MY_DEFAULT_PRIMARY_DNS_BYTE4<<24ul;
-        AppConfig.SecondaryDNSServer.Val = MY_DEFAULT_SECONDARY_DNS_BYTE1 | MY_DEFAULT_SECONDARY_DNS_BYTE2<<8ul  | MY_DEFAULT_SECONDARY_DNS_BYTE3<<16ul  | MY_DEFAULT_SECONDARY_DNS_BYTE4<<24ul;
-        AppConfig.DefaultIPAddr.Val = AppConfig.MyIPAddr.Val;
-        AppConfig.DefaultMask.Val = AppConfig.MyMask.Val;
-        memcpypgm2ram(AppConfig.NetBIOSName, (ROM void*)MY_DEFAULT_HOST_NAME, 16);
-        AppConfig.Flags.bIsDHCPEnabled = TRUE;
-        AppConfig.Flags.bInConfigMode = TRUE;
-        memcpypgm2ram((void*)&AppConfig.MyMACAddr, (ROM void*)SerializedMACAddress, sizeof(AppConfig.MyMACAddr));
+    AppConfig.MyIPAddr.Val = MY_DEFAULT_IP_ADDR_BYTE1 | MY_DEFAULT_IP_ADDR_BYTE2<<8ul | MY_DEFAULT_IP_ADDR_BYTE3<<16ul | MY_DEFAULT_IP_ADDR_BYTE4<<24ul;
+    AppConfig.MyMask.Val = MY_DEFAULT_MASK_BYTE1 | MY_DEFAULT_MASK_BYTE2<<8ul | MY_DEFAULT_MASK_BYTE3<<16ul | MY_DEFAULT_MASK_BYTE4<<24ul;
+    AppConfig.MyGateway.Val = MY_DEFAULT_GATE_BYTE1 | MY_DEFAULT_GATE_BYTE2<<8ul | MY_DEFAULT_GATE_BYTE3<<16ul | MY_DEFAULT_GATE_BYTE4<<24ul;
+    AppConfig.PrimaryDNSServer.Val = MY_DEFAULT_PRIMARY_DNS_BYTE1 | MY_DEFAULT_PRIMARY_DNS_BYTE2<<8ul  | MY_DEFAULT_PRIMARY_DNS_BYTE3<<16ul  | MY_DEFAULT_PRIMARY_DNS_BYTE4<<24ul;
+    AppConfig.SecondaryDNSServer.Val = MY_DEFAULT_SECONDARY_DNS_BYTE1 | MY_DEFAULT_SECONDARY_DNS_BYTE2<<8ul  | MY_DEFAULT_SECONDARY_DNS_BYTE3<<16ul  | MY_DEFAULT_SECONDARY_DNS_BYTE4<<24ul;
+    AppConfig.DefaultIPAddr.Val = AppConfig.MyIPAddr.Val;
+    AppConfig.DefaultMask.Val = AppConfig.MyMask.Val;
+    memcpypgm2ram(AppConfig.NetBIOSName, (ROM void*)MY_DEFAULT_HOST_NAME, 16);
+    AppConfig.Flags.bIsDHCPEnabled = TRUE;
+    AppConfig.Flags.bInConfigMode = TRUE;
+    memcpypgm2ram((void*)&AppConfig.MyMACAddr, (ROM void*)SerializedMACAddress, sizeof(AppConfig.MyMACAddr));
+
+    XEEInit();
+    XEEReadArray(0xFA, AppConfig.MyMACAddr.v, 6); // Read MAC addr from EEPROM
 }
